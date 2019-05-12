@@ -23,7 +23,6 @@ checker1.setAttribute('id', 'checker_1');
 checker1.setAttribute('src', '/checkers/checkerBlack.png');
 checker1.setAttribute('width', '30');
 checker1.setAttribute('height', '30');
-checker1.s
 
 var checker2 = document.createElement('img'); // элемент шашка, устанавливаем свойства
 checker2.setAttribute('id', 'checker_2');
