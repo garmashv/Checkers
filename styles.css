@@ -1,0 +1,11 @@
+td {
+    font-size: 7px;
+    vertical-align: top;
+    alignment: left;
+    width: 40px;
+    height: 40px;
+}
+
+.blue {
+    background-color: blue;
+}
