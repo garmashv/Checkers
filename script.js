@@ -63,6 +63,10 @@ function checkerClick(event) {
         if (cellArray[2] > 0) { // если левая клетка возможного хода не за пределами доски
             adjacentCell1 = document.getElementById(adjacentCellId1); // получаем эту клетку по ее id
             adjacentCell1.classList.add('blue'); // и подсвечиваем
+            if (adjacentCell1.childNodes.length > 1) {
+                captureChecker(clickedChecker);
+
+            }
         }
         if (cellArray[1] > 0) { //если правая клетка возможного хода не за пределами доски
             adjacentCell2 = document.getElementById(adjacentCellId2); // получаем эту клетку по ее id
@@ -79,4 +83,9 @@ function checkerClick(event) {
             // checker2.parentNode.getAttribute('id')
         }
     }
+}
+
+function captureChecker() {
+    alert('CAPTURE!!!');
+
 }
