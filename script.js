@@ -64,7 +64,7 @@ function checkerClick(event) {
             adjacentCell1 = document.getElementById(adjacentCellId1); // получаем эту клетку по ее id
             adjacentCell1.classList.add('blue'); // и подсвечиваем
             if (adjacentCell1.childNodes.length > 1) {
-                captureChecker(clickedChecker);
+                captureChecker(clickedChecker); // -------------------------------------> для боя <------------------------
 
             }
         }
