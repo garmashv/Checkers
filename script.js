@@ -55,16 +55,15 @@ function checkerClick(event) {
         if (clickedChecker.className === 'black') { // если черная, то для хода - 2 диагональные верхние
             adjacentCellId1 = cellArray[0] + '_' + (parseInt(cellArray[1])-1) + '_' + (parseInt(cellArray[2])-1);
             adjacentCellId2 = cellArray[0] + '_' + (parseInt(cellArray[1])-1) + '_' + (parseInt(cellArray[2])+1);
-        } else { // если белая, то для хода - 2 диагональные нижние
+        }
+        if (clickedChecker.className === 'white') { // если белая, то для хода - 2 диагональные нижние
             adjacentCellId1 = cellArray[0] + '_' + (parseInt(cellArray[1])+1) + '_' + (parseInt(cellArray[2])-1);
             adjacentCellId2 = cellArray[0] + '_' + (parseInt(cellArray[1])+1) + '_' + (parseInt(cellArray[2])+1);
         }
-
         if (cellArray[2] > 0) { // если левая клетка возможного хода не за пределами доски
             adjacentCell1 = document.getElementById(adjacentCellId1); // получаем эту клетку по ее id
             adjacentCell1.classList.add('blue'); // и подсвечиваем
         }
-
         if (cellArray[1] > 0) { //если правая клетка возможного хода не за пределами доски
             adjacentCell2 = document.getElementById(adjacentCellId2); // получаем эту клетку по ее id
             adjacentCell2.classList.add('blue'); // и подсвечиваем
