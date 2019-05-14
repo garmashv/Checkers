@@ -75,34 +75,33 @@ function checkerClick(event) {
                 capturedChecker = document.getElementById(underCaptureCellId);
                 captureChecker(clickedChecker); // -------------------------------------> для боя <------------------------
             }
-
-
         }
         if (cellArray[1] > 0) { //если правая клетка возможного хода не за пределами доски
             adjacentCell2 = document.getElementById(adjacentCellId2); // получаем эту клетку по ее id
-            adjacentCell2.classList.add('blue'); // и подсвечиваем
+            if (adjacentCell2.childNodes.length <= 1) { // и если там нет шашки
+                adjacentCell2.classList.add('blue'); // то подсвечиваем
+
+            }
+
         }
 
     } else {
 
-        if (event.target.classList.contains('blue')) { // если кликнутая была подсвечена,
+        if (event.target.classList.contains('blue')) { // если кликнутая клетка была подсвечена,
             event.target.appendChild(clickedChecker); // то ходим на нее, т.е перемещение шашки
             document.querySelectorAll('.blue').forEach(function(item){
                 item.classList.remove('blue'); // гасим подсвеченные для хода клетки
             });
-            // checker2.parentNode.getAttribute('id')
         }
     }
 }
 
 function captureChecker() {
-    alert('CAPTURE!!!');
-    postCaptureCell.appendChild(clickedChecker); // бой шашки, прыжок той, кот. бьет, появл-е на новой клетке
+    //alert('CAPTURE!!!');
+    postCaptureCell.appendChild(clickedChecker); // перепрыгиваем через битую шашку
     while (underCaptureCell.firstChild) {
-        underCaptureCell.removeChild(underCaptureCell.firstChild);
+        underCaptureCell.removeChild(underCaptureCell.firstChild); // удаляем битую шашку
     }
-    underCaptureCell.classList.remove('red');
+    underCaptureCell.classList.remove('red'); // гасим все подсвеченные
     postCaptureCell.classList.remove('blue');
-
-
 }
