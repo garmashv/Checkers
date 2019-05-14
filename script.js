@@ -68,7 +68,12 @@ function checkerClick(event) {
                 postCaptureCellId = cellArray[0] + '_' + (parseInt(cellArray[1])-2) + '_' + (parseInt(cellArray[2])-2);
                 postCaptureCell = document.getElementById(postCaptureCellId); // и получаем эту клетку по ее id
                 postCaptureCell.classList.add('blue'); // а также подсвечиваем ее
-                    captureChecker(clickedChecker); // -------------------------------------> для боя <------------------------
+                // формируем id клетки, которая под боем
+                underCaptureCellId = cellArray[0] + '_' + (parseInt(cellArray[1])-1) + '_' + (parseInt(cellArray[2])-1);
+                underCaptureCell = document.getElementById(underCaptureCellId); // и получаем эту клетку по ее id
+                underCaptureCell.classList.add('red'); // а также подсвечиваем ее
+                capturedChecker = document.getElementById(underCaptureCellId);
+                captureChecker(clickedChecker); // -------------------------------------> для боя <------------------------
             }
 
 
@@ -92,5 +97,12 @@ function checkerClick(event) {
 
 function captureChecker() {
     alert('CAPTURE!!!');
+    postCaptureCell.appendChild(clickedChecker); // бой шашки, прыжок той, кот. бьет, появл-е на новой клетке
+    while (underCaptureCell.firstChild) {
+        underCaptureCell.removeChild(underCaptureCell.firstChild);
+    }
+    underCaptureCell.classList.remove('red');
+    postCaptureCell.classList.remove('blue');
+
 
 }
