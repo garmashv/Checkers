@@ -97,7 +97,7 @@ function checkerClick(event) {
 }
 
 function captureChecker() {
-    //alert('CAPTURE!!!');
+    alert('CAPTURE!!!');
     postCaptureCell.appendChild(clickedChecker); // перепрыгиваем через битую шашку
     while (underCaptureCell.firstChild) {
         underCaptureCell.removeChild(underCaptureCell.firstChild); // удаляем битую шашку
