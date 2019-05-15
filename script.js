@@ -3,6 +3,7 @@ var tbl = document.createElement("table");
 var tblBody = document.createElement("tbody");
 var clickedCell; // кликнутый объект
 var clickedCheckerId = '';
+var cellArray = []; // массив где id...
 
 for (var j = 0; j < 8; j++) { // cells creation
     var row = document.createElement("tr"); // table row creation
@@ -46,10 +47,10 @@ function checkerClick(event) {
     if (clickedCell !== undefined) clickedCell.style.backgroundColor = ''; // ------- непонятно зачем? :)
     clickedCell = event.target; // вытаскием из события "клик" эл-т, по которому кликнули
 
-    if (event.target.tagName === 'IMG') { // если клик по именно по шашке (рис.) а не по клетке, etc.
+    if (event.target.tagName === 'IMG') { // если клик именно по шашке (рис.) а не по клетке, etc.
         clickedCheckerId = event.target.getAttribute('id'); // id кликнутой шашки из события (клика)
         clickedChecker = document.getElementById(clickedCheckerId); // из id кликнутой шашки получаем сам эл-т
-        let cellArray = clickedCell.parentNode.getAttribute('id').split('_'); // массив cellArray["cell", "7", "1"]
+        cellArray = clickedCell.parentNode.getAttribute('id').split('_'); // массив cellArray["cell", "7", "1"]
 
         // определяем, какая шашка кликнута - black или white и формируем id-шники клеток возможного хода
         if (clickedChecker.className === 'black') { // если черная, то для хода - 2 диагональные верхние
@@ -72,8 +73,8 @@ function checkerClick(event) {
                 underCaptureCellId = cellArray[0] + '_' + (parseInt(cellArray[1])-1) + '_' + (parseInt(cellArray[2])-1);
                 underCaptureCell = document.getElementById(underCaptureCellId); // и получаем эту клетку по ее id
                 underCaptureCell.classList.add('red'); // а также подсвечиваем ее
-                capturedChecker = document.getElementById(underCaptureCellId);
-                captureChecker(clickedChecker); // бьем шашку
+
+                captureChecker(); // бьем шашку
             }
         }
         if (cellArray[1] > 0) { //если правая клетка возможного хода не за пределами доски
@@ -86,13 +87,7 @@ function checkerClick(event) {
         }
 
     } else {
-
-        if (event.target.classList.contains('blue')) { // если кликнутая клетка была подсвечена,
-            event.target.appendChild(clickedChecker); // то ходим на нее, т.е перемещение шашки
-            document.querySelectorAll('.blue').forEach(function(item){
-                item.classList.remove('blue'); // гасим подсвеченные для хода клетки
-            });
-        }
+        turnChecker();
     }
 }
 
@@ -100,8 +95,17 @@ function captureChecker() {
     alert('CAPTURE!!!');
     postCaptureCell.appendChild(clickedChecker); // перепрыгиваем через битую шашку
     while (underCaptureCell.firstChild) {
-        underCaptureCell.removeChild(underCaptureCell.firstChild); // удаляем битую шашку с доски!!!
+        underCaptureCell.removeChild(underCaptureCell.firstChild); // удаляем битую шашку с доски
     }
     underCaptureCell.classList.remove('red'); // гасим все подсвеченные
     postCaptureCell.classList.remove('blue');
+}
+
+function turnChecker() {
+    if (event.target.classList.contains('blue')) { // если кликнутая клетка была подсвечена,
+        event.target.appendChild(clickedChecker); // то ходим на нее, т.е перемещение шашки
+        document.querySelectorAll('.blue').forEach(function(item){
+            item.classList.remove('blue'); // гасим подсвеченные клетки после хода
+        });
+    }
 }
