@@ -73,7 +73,7 @@ function checkerClick(event) {
                 underCaptureCell = document.getElementById(underCaptureCellId); // и получаем эту клетку по ее id
                 underCaptureCell.classList.add('red'); // а также подсвечиваем ее
                 capturedChecker = document.getElementById(underCaptureCellId);
-                captureChecker(clickedChecker); // -------------------------------------> для боя <------------------------
+                captureChecker(clickedChecker); // бьем шашку
             }
         }
         if (cellArray[1] > 0) { //если правая клетка возможного хода не за пределами доски
