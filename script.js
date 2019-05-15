@@ -65,16 +65,6 @@ function checkerClick(event) {
             adjacentCell1 = document.getElementById(adjacentCellId1); // получаем эту клетку по ее id
             if (adjacentCell1.childNodes.length <= 1) { // и если там нет шашки
                 adjacentCell1.classList.add('blue'); // то подсвечиваем
-            } else { // иначе - бой, формируем id клетки, куда прыжок по диаг. на 2 клетки через шашку под боем)
-                postCaptureCellId = cellArray[0] + '_' + (parseInt(cellArray[1])-2) + '_' + (parseInt(cellArray[2])-2);
-                postCaptureCell = document.getElementById(postCaptureCellId); // и получаем эту клетку по ее id
-                postCaptureCell.classList.add('blue'); // а также подсвечиваем ее
-                // формируем id клетки, которая под боем
-                underCaptureCellId = cellArray[0] + '_' + (parseInt(cellArray[1])-1) + '_' + (parseInt(cellArray[2])-1);
-                underCaptureCell = document.getElementById(underCaptureCellId); // и получаем эту клетку по ее id
-                underCaptureCell.classList.add('red'); // а также подсвечиваем ее
-
-                captureChecker(); // бьем шашку
             }
         }
         if (cellArray[1] > 0) { //если правая клетка возможного хода не за пределами доски
@@ -92,6 +82,16 @@ function checkerClick(event) {
 }
 
 function captureChecker() {
+    /*
+        // иначе - бой, формируем id клетки, куда прыжок по диаг. на 2 клетки через шашку под боем)
+        postCaptureCellId = cellArray[0] + '_' + (parseInt(cellArray[1])-2) + '_' + (parseInt(cellArray[2])-2);
+        postCaptureCell = document.getElementById(postCaptureCellId); // и получаем эту клетку по ее id
+        postCaptureCell.classList.add('blue'); // а также подсвечиваем ее
+        // формируем id клетки, которая под боем
+        underCaptureCellId = cellArray[0] + '_' + (parseInt(cellArray[1])-1) + '_' + (parseInt(cellArray[2])-1);
+        underCaptureCell = document.getElementById(underCaptureCellId); // и получаем эту клетку по ее id
+        underCaptureCell.classList.add('red'); // а также подсвечиваем ее
+    */
     alert('CAPTURE!!!');
     postCaptureCell.appendChild(clickedChecker); // перепрыгиваем через битую шашку
     while (underCaptureCell.firstChild) {
