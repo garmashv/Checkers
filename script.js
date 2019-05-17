@@ -1,15 +1,15 @@
-var body = document.querySelector('body');
-var tbl = document.createElement("table");
-var tblBody = document.createElement("tbody");
-var clickedElement; // кликнутый объект
-var clickedCheckerId = '';
-var cellArray = []; // массив где id...
+let body = document.querySelector('body');
+let tbl = document.createElement("table");
+let tblBody = document.createElement("tbody");
+let clickedElement; // кликнутый объект
+let clickedCheckerId = '';
+let cellArray = []; // массив где id...
 
-for (var j = 0; j < 8; j++) { // cells creation
-    var row = document.createElement("tr"); // table row creation
-    for (var i = 0; i < 8; i++) {
-        var cell = document.createElement("td"); // put <td> at end of the table row
-        var cellText = document.createTextNode(j + "," + i); // create element <td> and text node
+for (let j = 0; j < 8; j++) { // cells creation
+    let row = document.createElement("tr"); // table row creation
+    for (let i = 0; i < 8; i++) {
+        let cell = document.createElement("td"); // put <td> at end of the table row
+        let cellText = document.createTextNode(j + "," + i); // create element <td> and text node
         cell.setAttribute('id', 'cell_' + j + '_' + i);
         cell.setAttribute('innerHeight', '50'); //
         cell.setAttribute('innerWidth', '50'); //
@@ -19,14 +19,14 @@ for (var j = 0; j < 8; j++) { // cells creation
     tblBody.appendChild(row); //row added to end of table body
 }
 
-var checker1 = document.createElement('img'); // черная шашка (рисунок), устанавливаем свойства
+let checker1 = document.createElement('img'); // черная шашка (рисунок), устанавливаем свойства
 checker1.setAttribute('id', 'checker_1');
 checker1.setAttribute('src', '/checkers/checkerBlack.png');
 checker1.setAttribute('width', '30');
 checker1.setAttribute('height', '30');
 checker1.classList.add('black');
 
-var checker2 = document.createElement('img');  // белая шашка (рисунок), устанавливаем свойства
+let checker2 = document.createElement('img');  // белая шашка (рисунок), устанавливаем свойства
 checker2.setAttribute('id', 'checker_2');
 checker2.setAttribute('src', '/checkers/checkerWhite.png');
 checker2.setAttribute('width', '30');
@@ -51,8 +51,6 @@ function checkerClick(event) {
         clickedCheckerId = event.target.getAttribute('id'); // id кликнутой шашки из события (клика)
         clickedChecker = document.getElementById(clickedCheckerId); // из id кликнутой шашки получаем сам эл-т
         cellArray = clickedElement.parentNode.getAttribute('id').split('_'); // массив cellArray["cell", "7", "1"]
-        currentCell = clickedElement.parentNode; // клетка (с шашкой) по которой был клик,
-        currentCell.classList.add('currentCell'); // подсвечиваем ее синей рамкой
 
         // определяем, какая шашка кликнута - black или white и формируем id-шники клеток возможного хода
         if (clickedChecker.className === 'black') { // если черная, то для хода - 2 диагональные верхние
@@ -85,16 +83,13 @@ function checkerClick(event) {
         }
 
     } else {
-        currentCell.classList.remove('currentCell'); // убираем синюю рамку после хода
-        moveChecker();
+        turnChecker();
     }
 }
 
 function captureChecker() {
 
     alert('CAPTURE!!!');
-    adjacentCell1.classList.remove('blue'); // убираем подсветку клеток хода
-    adjacentCell2.classList.remove('blue');
 
     if (adjacentCell1.childNodes.length > 1) { // если в этой клетке есть шашка для боя,
         while (adjacentCell1.firstChild) {
@@ -110,15 +105,13 @@ function captureChecker() {
         postCaptureCell2 = document.getElementById(postCaptureCellId2); // id клетки куда перепрыгиваем
         postCaptureCell2.appendChild(clickedChecker); // перепрыгиваем через битую шашку
     }
-    currentCell.classList.remove('currentCell');
 }
 
-function moveChecker() {
+function turnChecker() {
     if (event.target.classList.contains('blue')) { // если кликнутая клетка была подсвечена,
         event.target.appendChild(clickedChecker); // то ходим на нее, т.е перемещение шашки
         document.querySelectorAll('.blue').forEach(function(item){
             item.classList.remove('blue'); // гасим подсвеченные клетки после хода
         });
     }
-
 }
