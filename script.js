@@ -4,7 +4,6 @@ let tblBody = document.createElement("tbody");
 let clickedElement; // кликнутый объект
 let clickedCheckerId = '';
 let cellArray = []; // массив где id...
-let event;
 
 for (let j = 0; j < 8; j++) { // cells creation
     let row = document.createElement("tr"); // table row creation
