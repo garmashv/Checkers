@@ -83,7 +83,7 @@ function checkerClick(event) {
         }
 
     } else {
-        turnChecker();
+        moveChecker();
     }
 }
 
@@ -107,7 +107,7 @@ function captureChecker() {
     }
 }
 
-function turnChecker() {
+function moveChecker() {
     if (event.target.classList.contains('blue')) { // если кликнутая клетка была подсвечена,
         event.target.appendChild(clickedChecker); // то ходим на нее, т.е перемещение шашки
         document.querySelectorAll('.blue').forEach(function(item){
