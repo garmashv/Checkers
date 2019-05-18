@@ -70,7 +70,10 @@ function checkerClick(event) {
             if (adjacentCell1.childNodes.length <= 1) { // и если там нет шашки
                 adjacentCell1.classList.add('blue'); // то подсвечиваем
             } else {
+                adjacentCell1.classList.remove('blue');
+                adjacentCell2.classList.remove('blue');
                 captureChecker();
+                return;
             }
         }
         if (cellArray[1] > 0) { //если правая клетка возможного хода не за пределами доски
@@ -78,12 +81,14 @@ function checkerClick(event) {
             if (adjacentCell2.childNodes.length <= 1) { // и если там нет шашки
                 adjacentCell2.classList.add('blue'); // то подсвечиваем
             } else {
+                adjacentCell1.classList.remove('blue');
+                adjacentCell2.classList.remove('blue');
                 captureChecker();
             }
         }
 
     } else {
-        moveChecker();
+        moveChecker(event.target);
     }
 }
 
@@ -107,9 +112,9 @@ function captureChecker() {
     }
 }
 
-function moveChecker() {
-    if (event.target.classList.contains('blue')) { // если кликнутая клетка была подсвечена,
-        event.target.appendChild(clickedChecker); // то ходим на нее, т.е перемещение шашки
+function moveChecker(target) {
+    if (target.classList.contains('blue')) { // если кликнутая клетка была подсвечена,
+        target.appendChild(clickedChecker); // то ходим на нее, т.е перемещение шашки
         document.querySelectorAll('.blue').forEach(function(item){
             item.classList.remove('blue'); // гасим подсвеченные клетки после хода
         });
