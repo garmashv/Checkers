@@ -70,8 +70,8 @@ function checkerClick(event) {
             if (adjacentCell1.childNodes.length <= 1) { // и если там нет шашки
                 adjacentCell1.classList.add('blue'); // то подсвечиваем
             } else {
-                adjacentCell1.classList.remove('blue');
-                adjacentCell2.classList.remove('blue');
+                adjacentCell1.classList.remove('blue'); // гасим подсвеченные клетки перед боем
+                adjacentCell2.classList.remove('blue'); //
                 captureChecker();
                 return;
             }
@@ -81,8 +81,8 @@ function checkerClick(event) {
             if (adjacentCell2.childNodes.length <= 1) { // и если там нет шашки
                 adjacentCell2.classList.add('blue'); // то подсвечиваем
             } else {
-                adjacentCell1.classList.remove('blue');
-                adjacentCell2.classList.remove('blue');
+                adjacentCell1.classList.remove('blue'); // гасим подсвеченные клетки перед боем
+                adjacentCell2.classList.remove('blue'); //
                 captureChecker();
             }
         }
