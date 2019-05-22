@@ -44,7 +44,7 @@ document.getElementById("board").addEventListener("click", event=>checkerClick(e
 // и слушатель на клик по шашке ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 function checkerClick(event) {
-    if (clickedElement !== undefined) clickedElement.style.backgroundColor = ''; // ------- непонятно зачем? :)
+    if (clickedElement !== undefined) clickedElement.style.backgroundColor = ''; // -------
     clickedElement = event.target; // вытаскием из события "клик" эл-т, по которому кликнули
 
     if (event.target.tagName === 'IMG') { // если клик именно по шашке (рис.) а не по клетке, etc.
