@@ -60,8 +60,10 @@ class DrawGame {
             let row = document.createElement("tr");
             for (let i = 0; i < 8; i++) {
                 let cell = document.createElement("td");
-                let cellText = document.createTextNode(board.boardCells[i][j].toSource());
-                cell.appendChild(cellText);
+                if (board.boardCells[i][j].currentChecker) {
+                    let cellText = document.createTextNode(board.boardCells[i][j].currentChecker);
+                    cell.appendChild(cellText);
+                }
                 row.appendChild(cell);
             }
             tblBody.appendChild(row);
@@ -70,7 +72,6 @@ class DrawGame {
             tbl.setAttribute("border", "2");
             tbl.setAttribute("id", "board");
         }
-
     }
 }
 
