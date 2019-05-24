@@ -61,7 +61,7 @@ class DrawGame {
             for (let i = 0; i < 8; i++) {
                 let cell = document.createElement("td");
                 if (board.boardCells[i][j].currentChecker) {
-                    let cellText = document.createTextNode(board.boardCells[i][j].currentChecker);
+                    let cellText = document.createTextNode((board.boardCells[i][j].currentChecker).toSource());
                     cell.appendChild(cellText);
                 }
                 row.appendChild(cell);
