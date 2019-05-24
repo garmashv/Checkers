@@ -36,9 +36,20 @@ class Board { // доска
             for (let i = 0; i < boardSize; i++) {
                 if (this.boardCells[i][j].color === 'black')
                 {
-                    let currentChecker = new Checker('black', false, i, j);
+                    let currentChecker = new Checker(this.boardCells[i][j].color, false, i, j);
                     this.boardCells[i][j].appendChecker(currentChecker);
                 }
+
+            }
+        }
+        for (let j = boardSize-3; j < boardSize; j++) {
+            for (let i = 0; i < boardSize; i++) {
+                if (this.boardCells[i][j].color === 'white')
+                {
+                    let currentChecker = new Checker(this.boardCells[i][j].color, false, i, j);
+                    this.boardCells[i][j].appendChecker(currentChecker);
+                }
+
             }
         }
     }
@@ -61,7 +72,7 @@ class DrawGame {
             for (let i = 0; i < 8; i++) {
                 let cell = document.createElement("td");
                 cell.setAttribute('align', 'center');
-                cell.setAttribute('valign', 'middle');
+                cell.setAttribute('valign', 'center');
                 if (board.boardCells[i][j].currentChecker) {
                     let checker = document.createElement('img');
                     if(board.boardCells[i][j].currentChecker.color === 'black') {
