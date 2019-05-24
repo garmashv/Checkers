@@ -16,27 +16,24 @@ class Cell { // клетка
     }
     appendChecker(currentChecker) {
         this.currentChecker = currentChecker;
-        //
-
     }
-
 }
 
 class Board { // доска
     constructor(boardSize) {
         this.boardSize = boardSize;
         this.boardCells = [];
-        for (let i = 0; i < boardSize; i++) {
-            this.boardCells[i] = [];
-            for (let j = 0; j < boardSize; j++) {
+        for (let j = 0; j < boardSize; j++) {
+            this.boardCells[j] = [];
+            for (let i = 0; i < boardSize; i++) {
                 var color = (i + j) % 2 === 0 ? "black" : "white";
-                this.boardCells[i][j] = new Cell(color, i, j);
+                this.boardCells[j][i] = new Cell(color, i, j);
             }
         }
     }
     placeCheckers(boardSize) {
-        for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < boardSize; j++) {
+        for (let j = 0; j < 3; j++) {
+            for (let i = 0; i < boardSize; i++) {
                 if (this.boardCells[i][j].color === 'black')
                 {
                     let currentChecker = new Checker('black', false, i, j);
@@ -53,3 +50,28 @@ board = new Board(boardSize);
 board.placeCheckers(boardSize);
 
 console.log(board);
+
+class DrawGame {
+    static drawBoard() {
+        let body = document.querySelector('body');
+        let tblBody = document.createElement("tbody");
+        let tbl = document.createElement("table");
+        for (let j = 0; j < 8; j++) {
+            let row = document.createElement("tr");
+            for (let i = 0; i < 8; i++) {
+                let cell = document.createElement("td");
+                let cellText = document.createTextNode(board.boardCells[i][j].toSource());
+                cell.appendChild(cellText);
+                row.appendChild(cell);
+            }
+            tblBody.appendChild(row);
+            tbl.appendChild(tblBody);
+            body.appendChild(tbl);
+            tbl.setAttribute("border", "2");
+            tbl.setAttribute("id", "board");
+        }
+
+    }
+}
+
+DrawGame.drawBoard();
