@@ -60,9 +60,19 @@ class DrawGame {
             let row = document.createElement("tr");
             for (let i = 0; i < 8; i++) {
                 let cell = document.createElement("td");
+                cell.setAttribute('align', 'center');
+                cell.setAttribute('valign', 'middle');
                 if (board.boardCells[i][j].currentChecker) {
-                    let cellText = document.createTextNode((board.boardCells[i][j].currentChecker).toSource());
-                    cell.appendChild(cellText);
+                    let checker = document.createElement('img');
+                    if(board.boardCells[i][j].currentChecker.color === 'black') {
+                        checker.setAttribute('src', '/checkers/checkerBlack.png');
+                    } else {
+                        checker.setAttribute('src', '/checkers/checkerWhite.png');
+                    }
+                    checker.setAttribute('width', '30');
+                    checker.setAttribute('height', '30');
+                    //checker.setAttribute();
+                    cell.appendChild(checker);
                 }
                 row.appendChild(cell);
             }
