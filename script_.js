@@ -17,6 +17,9 @@ class Cell { // клетка
     appendChecker(currentChecker) {
         this.currentChecker = currentChecker;
     }
+    removeChecker() {
+        this.currentChecker = null;
+    }
 }
 
 class Board { // доска
@@ -36,7 +39,7 @@ class Board { // доска
             for (let i = 0; i < boardSize; i++) {
                 if (this.boardCells[i][j].color === 'black')
                 {
-                    let currentChecker = new Checker(this.boardCells[i][j].color, false, i, j);
+                    let currentChecker = new Checker('black', false, i, j);
                     this.boardCells[i][j].appendChecker(currentChecker);
                 }
 
@@ -46,7 +49,7 @@ class Board { // доска
             for (let i = 0; i < boardSize; i++) {
                 if (this.boardCells[i][j].color === 'white')
                 {
-                    let currentChecker = new Checker(this.boardCells[i][j].color, false, i, j);
+                    let currentChecker = new Checker('white', false, i, j);
                     this.boardCells[i][j].appendChecker(currentChecker);
                 }
 
@@ -64,6 +67,7 @@ console.log(board);
 
 class DrawGame {
     static drawBoard() {
+        document.body.innerHTML = '';
         let body = document.querySelector('body');
         let tblBody = document.createElement("tbody");
         let tbl = document.createElement("table");
@@ -73,6 +77,9 @@ class DrawGame {
                 let cell = document.createElement("td");
                 cell.setAttribute('align', 'center');
                 cell.setAttribute('valign', 'center');
+                if(board.boardCells[i][j].color === 'black') {
+                    cell.setAttribute('bgcolor', 'gray');
+                }
                 if (board.boardCells[i][j].currentChecker) {
                     let checker = document.createElement('img');
                     if(board.boardCells[i][j].currentChecker.color === 'black') {
@@ -88,12 +95,19 @@ class DrawGame {
                 row.appendChild(cell);
             }
             tblBody.appendChild(row);
-            tbl.appendChild(tblBody);
-            body.appendChild(tbl);
-            tbl.setAttribute("border", "2");
-            tbl.setAttribute("id", "board");
         }
+        tbl.appendChild(tblBody);
+        body.appendChild(tbl);
+        tbl.setAttribute("border", "2");
     }
 }
+
+DrawGame.drawBoard();
+alert('REMOVE');
+board.boardCells[6][2].removeChecker();
+DrawGame.drawBoard();
+
+alert('APPEND');
+board.boardCells[7][3].appendChecker(7, 3);
 
 DrawGame.drawBoard();
