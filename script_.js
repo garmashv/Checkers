@@ -47,7 +47,7 @@ class Board { // доска
         }
         for (let j = boardSize-3; j < boardSize; j++) {
             for (let i = 0; i < boardSize; i++) {
-                if (this.boardCells[i][j].color === 'white')
+                if (this.boardCells[i][j].color === 'black')
                 {
                     let currentChecker = new Checker('white', false, i, j);
                     this.boardCells[i][j].appendChecker(currentChecker);
