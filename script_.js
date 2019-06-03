@@ -4,6 +4,8 @@ class Checker { // шашка
         this.isKing = false;
         this.posX = posX;
         this.posY = posY;
+        this.cellForMove1 = null;
+        this.cellForMove2 = null;
     }
 }
 
@@ -42,7 +44,21 @@ class Board { // доска
                     let currentChecker = new Checker('black', false, i, j);
                     this.boardCells[i][j].appendChecker(currentChecker);
                 }
-
+            }
+        }
+        for (let j = 0; j < 3; j++) {
+            for (let i = 0; i < boardSize; i++) {
+                if (this.boardCells[i][j].color === 'black')
+                {
+                    if (this.boardCells[i][j].currentChecker.color === 'black')
+                    {
+                        if (i-1 >= 0) {
+                            this.boardCells[i][j].currentChecker.cellForMove1 = [i-1, j+1];
+                            console.log(this.boardCells[i][j].currentChecker);
+                            console.log(this.boardCells[i][j].currentChecker.cellForMove1);
+                        }
+                    }
+                }
             }
         }
         for (let j = boardSize-3; j < boardSize; j++) {
@@ -56,24 +72,21 @@ class Board { // доска
             }
         }
     }
+    clickProcessing(posX, posY) {
+        // принимает координаты куда кликнули
+        // вызываем этот метод в событии клика
+    }
 }
 
-boardSize = 8;
-board = new Board(boardSize);
-
-board.placeCheckers(boardSize);
-
-console.log(board);
-
 class DrawGame {
-    static drawBoard() {
+    drawBoard(board) {
         document.body.innerHTML = '';
         let body = document.querySelector('body');
         let tblBody = document.createElement("tbody");
         let tbl = document.createElement("table");
-        for (let j = 0; j < 8; j++) {
+        for (let j = 0; j < boardSize; j++) {
             let row = document.createElement("tr");
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < boardSize; i++) {
                 let cell = document.createElement("td");
                 cell.setAttribute('align', 'center');
                 cell.setAttribute('valign', 'center');
@@ -89,7 +102,6 @@ class DrawGame {
                     }
                     checker.setAttribute('width', '30');
                     checker.setAttribute('height', '30');
-                    //checker.setAttribute();
                     cell.appendChild(checker);
                 }
                 row.appendChild(cell);
@@ -102,12 +114,19 @@ class DrawGame {
     }
 }
 
-DrawGame.drawBoard();
+boardSize = 8;
+board = new Board(boardSize);
+board.placeCheckers(boardSize);
+
+newGame = new DrawGame();
+newGame.drawBoard(board);
+
 alert('REMOVE');
+let currentChecker = new Checker('black', false, 6, 2);
 board.boardCells[6][2].removeChecker();
-DrawGame.drawBoard();
+newGame.drawBoard(board);
 
 alert('APPEND');
-board.boardCells[7][3].appendChecker(7, 3);
-
-DrawGame.drawBoard();
+currentChecker = new Checker('black', false, 7, 3);
+board.boardCells[7][3].appendChecker(currentChecker);
+newGame.drawBoard(board);
