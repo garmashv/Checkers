@@ -15,6 +15,7 @@ class Cell { // клетка
         this.posX = posX;
         this.posY = posY;
         this.currentChecker = null;
+        // this.id = color + posX + posY;
     }
     appendChecker(currentChecker) {
         this.currentChecker = currentChecker;
@@ -54,8 +55,10 @@ class Board { // доска
                     {
                         if (i-1 >= 0) {
                             this.boardCells[i][j].currentChecker.cellForMove1 = [i-1, j+1];
-                            console.log(this.boardCells[i][j].currentChecker);
-                            console.log(this.boardCells[i][j].currentChecker.cellForMove1);
+                            // тут или не тут должна быть проверка на выход за пределы доски
+                            // console.log(this.boardCells[i][j].currentChecker);
+                            // console.log(this.boardCells[i][j].currentChecker.cellForMove1);
+                            // формирование клеток хода реализовать отдельным методом <---------------------------------------
                         }
                     }
                 }
@@ -68,13 +71,13 @@ class Board { // доска
                     let currentChecker = new Checker('white', false, i, j);
                     this.boardCells[i][j].appendChecker(currentChecker);
                 }
-
             }
         }
     }
     clickProcessing(posX, posY) {
         // принимает координаты куда кликнули
         // вызываем этот метод в событии клика
+        console.log(posY, posX);
     }
 }
 
@@ -121,6 +124,7 @@ board.placeCheckers(boardSize);
 newGame = new DrawGame();
 newGame.drawBoard(board);
 
+/*
 alert('REMOVE');
 let currentChecker = new Checker('black', false, 6, 2);
 board.boardCells[6][2].removeChecker();
@@ -130,3 +134,16 @@ alert('APPEND');
 currentChecker = new Checker('black', false, 7, 3);
 board.boardCells[7][3].appendChecker(currentChecker);
 newGame.drawBoard(board);
+*/
+
+document.addEventListener("click", event=>checkerClick(event));
+
+function checkerClick(event) {
+    let clickedElement = event.target;
+    if (clickedElement.tagName === 'IMG') {
+        posY = clickedElement.parentNode.cellIndex;
+        posX = clickedElement.parentNode.parentElement.rowIndex;
+    }
+
+    board.clickProcessing(posX, posY);
+}
