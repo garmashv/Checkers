@@ -15,7 +15,6 @@ class Cell { // клетка
         this.posX = posX;
         this.posY = posY;
         this.currentChecker = null;
-        // this.id = color + posX + posY;
     }
     appendChecker(currentChecker) {
         this.currentChecker = currentChecker;
@@ -37,30 +36,13 @@ class Board { // доска
             }
         }
     }
-    placeCheckers(boardSize) {
+    placeCheckers(boardSize) { // разместить все шашки
         for (let j = 0; j < 3; j++) {
             for (let i = 0; i < boardSize; i++) {
                 if (this.boardCells[i][j].color === 'black')
                 {
                     let currentChecker = new Checker('black', false, i, j);
                     this.boardCells[i][j].appendChecker(currentChecker);
-                }
-            }
-        }
-        for (let j = 0; j < 3; j++) {
-            for (let i = 0; i < boardSize; i++) {
-                if (this.boardCells[i][j].color === 'black')
-                {
-                    if (this.boardCells[i][j].currentChecker.color === 'black')
-                    {
-                        if (i-1 >= 0) {
-                            this.boardCells[i][j].currentChecker.cellForMove1 = [i-1, j+1];
-                            // тут или не тут должна быть проверка на выход за пределы доски
-                            // console.log(this.boardCells[i][j].currentChecker);
-                            // console.log(this.boardCells[i][j].currentChecker.cellForMove1);
-                            // формирование клеток хода реализовать отдельным методом <---------------------------------------
-                        }
-                    }
                 }
             }
         }
@@ -74,15 +56,46 @@ class Board { // доска
             }
         }
     }
-    clickProcessing(posX, posY) {
-        // принимает координаты куда кликнули
-        // вызываем этот метод в событии клика
-        console.log(posY, posX);
+    clickProcessing(posX, posY) { // принимает координаты куда кликнули. вызываем этот метод в событии клика
+        if (this.boardCells[posY][posX].currentChecker.color === 'black') {
+            this.boardCells[posY][posX].currentChecker.cellForMove1 = [posY+1, posX+1];
+            this.boardCells[posY][posX].currentChecker.cellForMove2 = [posY-1, posX+1];
+            if ((this.boardCells[posY][posX].currentChecker.cellForMove1[0] > 7) ||
+            (this.boardCells[posY][posX].currentChecker.cellForMove1[1] > 7))
+            {
+                this.boardCells[posY][posX].currentChecker.cellForMove1 = undefined;
+            }
+            if ((this.boardCells[posY][posX].currentChecker.cellForMove2[0] < 0) ||
+            (this.boardCells[posY][posX].currentChecker.cellForMove2[0] > 7))
+            {
+                this.boardCells[posY][posX].currentChecker.cellForMove2 = undefined;
+            }
+            console.log(this.boardCells[posY][posX].currentChecker);
+            console.log('Для хода 1: ' + this.boardCells[posY][posX].currentChecker.cellForMove1);
+            console.log('Для хода 2: ' + this.boardCells[posY][posX].currentChecker.cellForMove2);
+        }
+        if (this.boardCells[posY][posX].currentChecker.color === 'white') {
+            this.boardCells[posY][posX].currentChecker.cellForMove1 = [posY-1, posX-1];
+            this.boardCells[posY][posX].currentChecker.cellForMove2 = [posY+1, posX-1];
+            if ((this.boardCells[posY][posX].currentChecker.cellForMove1[0] < 0) ||
+            (this.boardCells[posY][posX].currentChecker.cellForMove1[1] < 0))
+            {
+                this.boardCells[posY][posX].currentChecker.cellForMove1 = undefined;
+            }
+            if ((this.boardCells[posY][posX].currentChecker.cellForMove2[0] > 7) ||
+            (this.boardCells[posY][posX].currentChecker.cellForMove2[1] < 0))
+            {
+                this.boardCells[posY][posX].currentChecker.cellForMove2 = undefined;
+            }
+            console.log(this.boardCells[posY][posX].currentChecker);
+            console.log('Для хода 1: ' + this.boardCells[posY][posX].currentChecker.cellForMove1);
+            console.log('Для хода 2: ' + this.boardCells[posY][posX].currentChecker.cellForMove2);
+        }
     }
 }
 
 class DrawGame {
-    drawBoard(board) {
+    drawBoard(board) { // рисуется доска (визуально)
         document.body.innerHTML = '';
         let body = document.querySelector('body');
         let tblBody = document.createElement("tbody");
