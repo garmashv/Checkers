@@ -60,13 +60,18 @@ class Board { // доска
         if (this.boardCells[posY][posX].currentChecker.color === 'black') {
             this.boardCells[posY][posX].currentChecker.cellForMove1 = [posY+1, posX+1];
             this.boardCells[posY][posX].currentChecker.cellForMove2 = [posY-1, posX+1];
+
             if ((this.boardCells[posY][posX].currentChecker.cellForMove1[0] > 7) ||
-            (this.boardCells[posY][posX].currentChecker.cellForMove1[1] > 7))
+            (this.boardCells[posY][posX].currentChecker.cellForMove1[1] > 7) ||
+            (this.boardCells[this.boardCells[posY][posX].currentChecker.cellForMove1[0]][this.boardCells[posY][posX].
+            currentChecker.cellForMove1[1]].currentChecker))
             {
                 this.boardCells[posY][posX].currentChecker.cellForMove1 = undefined;
             }
             if ((this.boardCells[posY][posX].currentChecker.cellForMove2[0] < 0) ||
-            (this.boardCells[posY][posX].currentChecker.cellForMove2[0] > 7))
+            (this.boardCells[posY][posX].currentChecker.cellForMove2[0] > 7) ||
+            (this.boardCells[this.boardCells[posY][posX].currentChecker.cellForMove2[0]][this.boardCells[posY][posX].
+            currentChecker.cellForMove2[1]].currentChecker))
             {
                 this.boardCells[posY][posX].currentChecker.cellForMove2 = undefined;
             }
@@ -78,12 +83,16 @@ class Board { // доска
             this.boardCells[posY][posX].currentChecker.cellForMove1 = [posY-1, posX-1];
             this.boardCells[posY][posX].currentChecker.cellForMove2 = [posY+1, posX-1];
             if ((this.boardCells[posY][posX].currentChecker.cellForMove1[0] < 0) ||
-            (this.boardCells[posY][posX].currentChecker.cellForMove1[1] < 0))
+            (this.boardCells[posY][posX].currentChecker.cellForMove1[1] < 0) ||
+            (this.boardCells[this.boardCells[posY][posX].currentChecker.cellForMove1[0]][this.boardCells[posY][posX].
+            currentChecker.cellForMove1[1]].currentChecker))
             {
                 this.boardCells[posY][posX].currentChecker.cellForMove1 = undefined;
             }
             if ((this.boardCells[posY][posX].currentChecker.cellForMove2[0] > 7) ||
-            (this.boardCells[posY][posX].currentChecker.cellForMove2[1] < 0))
+            (this.boardCells[posY][posX].currentChecker.cellForMove2[1] < 0) ||
+            (this.boardCells[this.boardCells[posY][posX].currentChecker.cellForMove2[0]][this.boardCells[posY][posX].
+            currentChecker.cellForMove2[1]].currentChecker))
             {
                 this.boardCells[posY][posX].currentChecker.cellForMove2 = undefined;
             }
