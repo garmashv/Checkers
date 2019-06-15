@@ -122,11 +122,12 @@ class Board { // доска
             this.lastX = posX;
             this.lastY = posY;
         } else {
-            // если кликнуто по хайлайтед то вызвать метод хода
-            if (this.boardCells[posY][posX].getHighlited()) {
-                alert('MOVE!');
-                //this.boardCells[this.lastY][this.lastX].removeChecker(true);
-                //board.boardCells[]
+            if (this.boardCells[posY][posX].getHighlited()) { // если кликнуто по хайлайтед то вызвать метод хода
+                let colorOfMoved = this.boardCells[this.lastY][this.lastX].currentChecker.color; // перед удалением запомнить какого была цвета
+                this.boardCells[this.lastY][this.lastX].removeChecker();
+                let currentChecker = new Checker(colorOfMoved, false, posX, posY);
+                this.boardCells[posY][posX].appendChecker(currentChecker);
+                this.unsetHighlited(board); // очистить подсветку
             }
         }
         newGame.drawBoard(board);
@@ -178,7 +179,6 @@ class DrawGame {
         body.appendChild(tbl);
         tbl.setAttribute("border", "2");
     }
-
 }
 
 function checkerClick(event) {
@@ -189,7 +189,6 @@ function checkerClick(event) {
     } else {
         posY = clickedElement.cellIndex;
         posX = clickedElement.parentElement.rowIndex;
-        // console.log(posX, posY);
     }
     board.clickProcessing(posX, posY);
 }
@@ -197,20 +196,6 @@ function checkerClick(event) {
 boardSize = 8;
 board = new Board(boardSize);
 board.placeCheckers(boardSize);
-
 newGame = new DrawGame();
 newGame.drawBoard(board);
-
-/*
-alert('REMOVE');
-let currentChecker = new Checker('black', false, 6, 2);
-board.boardCells[6][2].removeChecker();
-newGame.drawBoard(board);
-
-alert('APPEND');
-currentChecker = new Checker('black', false, 7, 3);
-board.boardCells[7][3].appendChecker(currentChecker);
-newGame.drawBoard(board);
-*/
-
 document.addEventListener("click", event=>checkerClick(event));
