@@ -15,12 +15,25 @@ class Cell { // клетка
         this.posX = posX;
         this.posY = posY;
         this.currentChecker = null;
+        this.highlighted = false;
+    }
+    getHighlited() {
+        return this.highlighted;
+    }
+    setHighlited(isSet) {
+        this.highlighted = isSet;
     }
     appendChecker(currentChecker) {
         this.currentChecker = currentChecker;
     }
     removeChecker() {
         this.currentChecker = null;
+    }
+    getPosX() {
+        return this.posX;
+    }
+    getPosY() {
+        return this.posY;
     }
 }
 
@@ -57,25 +70,25 @@ class Board { // доска
         }
     }
     clickProcessing(posX, posY) { // принимает координаты куда кликнули. вызываем этот метод в событии клика
+        this.unsetHighlited(board);
         if (this.boardCells[posY][posX].currentChecker.color === 'black') {
             this.boardCells[posY][posX].currentChecker.cellForMove1 = [posY+1, posX+1];
             this.boardCells[posY][posX].currentChecker.cellForMove2 = [posY-1, posX+1];
 
             if ((this.boardCells[posY][posX].currentChecker.cellForMove1[0] > 7) ||
-            (this.boardCells[posY][posX].currentChecker.cellForMove1[1] > 7) ||
-            (this.boardCells[this.boardCells[posY][posX].currentChecker.cellForMove1[0]][this.boardCells[posY][posX].
-            currentChecker.cellForMove1[1]].currentChecker))
+                (this.boardCells[posY][posX].currentChecker.cellForMove1[1] > 7) ||
+                (this.boardCells[this.boardCells[posY][posX].currentChecker.cellForMove1[0]][this.boardCells[posY][posX].
+                currentChecker.cellForMove1[1]].currentChecker))
             {
                 this.boardCells[posY][posX].currentChecker.cellForMove1 = undefined;
             }
             if ((this.boardCells[posY][posX].currentChecker.cellForMove2[0] < 0) ||
-            (this.boardCells[posY][posX].currentChecker.cellForMove2[0] > 7) ||
-            (this.boardCells[this.boardCells[posY][posX].currentChecker.cellForMove2[0]][this.boardCells[posY][posX].
-            currentChecker.cellForMove2[1]].currentChecker))
+                (this.boardCells[posY][posX].currentChecker.cellForMove2[0] > 7) ||
+                (this.boardCells[this.boardCells[posY][posX].currentChecker.cellForMove2[0]][this.boardCells[posY][posX].
+                currentChecker.cellForMove2[1]].currentChecker))
             {
                 this.boardCells[posY][posX].currentChecker.cellForMove2 = undefined;
             }
-            console.log(this.boardCells[posY][posX].currentChecker);
             console.log('Для хода 1: ' + this.boardCells[posY][posX].currentChecker.cellForMove1);
             console.log('Для хода 2: ' + this.boardCells[posY][posX].currentChecker.cellForMove2);
         }
@@ -83,28 +96,53 @@ class Board { // доска
             this.boardCells[posY][posX].currentChecker.cellForMove1 = [posY-1, posX-1];
             this.boardCells[posY][posX].currentChecker.cellForMove2 = [posY+1, posX-1];
             if ((this.boardCells[posY][posX].currentChecker.cellForMove1[0] < 0) ||
-            (this.boardCells[posY][posX].currentChecker.cellForMove1[1] < 0) ||
-            (this.boardCells[this.boardCells[posY][posX].currentChecker.cellForMove1[0]][this.boardCells[posY][posX].
-            currentChecker.cellForMove1[1]].currentChecker))
+                (this.boardCells[posY][posX].currentChecker.cellForMove1[1] < 0) ||
+                (this.boardCells[this.boardCells[posY][posX].currentChecker.cellForMove1[0]][this.boardCells[posY][posX].
+                currentChecker.cellForMove1[1]].currentChecker))
             {
                 this.boardCells[posY][posX].currentChecker.cellForMove1 = undefined;
             }
             if ((this.boardCells[posY][posX].currentChecker.cellForMove2[0] > 7) ||
-            (this.boardCells[posY][posX].currentChecker.cellForMove2[1] < 0) ||
-            (this.boardCells[this.boardCells[posY][posX].currentChecker.cellForMove2[0]][this.boardCells[posY][posX].
-            currentChecker.cellForMove2[1]].currentChecker))
+                (this.boardCells[posY][posX].currentChecker.cellForMove2[1] < 0) ||
+                (this.boardCells[this.boardCells[posY][posX].currentChecker.cellForMove2[0]][this.boardCells[posY][posX].
+                currentChecker.cellForMove2[1]].currentChecker))
             {
                 this.boardCells[posY][posX].currentChecker.cellForMove2 = undefined;
             }
-            console.log(this.boardCells[posY][posX].currentChecker);
             console.log('Для хода 1: ' + this.boardCells[posY][posX].currentChecker.cellForMove1);
             console.log('Для хода 2: ' + this.boardCells[posY][posX].currentChecker.cellForMove2);
         }
+        // подсветить клетки коор-ты кот. находятся в cellForMove1 и cellForMove2
+        // получить клетку по коорд. cellForMove
+
+        if (this.boardCells[posY][posX].currentChecker.cellForMove1 !== undefined) {
+            this.boardCells[this.boardCells[posY][posX].currentChecker.cellForMove1[0]][this.boardCells[posY][posX].
+                currentChecker.cellForMove1[1]].setHighlited(true);
+        }
+        if (this.boardCells[posY][posX].currentChecker.cellForMove2 !== undefined) {
+            this.boardCells[this.boardCells[posY][posX].currentChecker.cellForMove2[0]][this.boardCells[posY][posX].
+                currentChecker.cellForMove2[1]].setHighlited(true);
+        }
+
+        newGame.drawBoard(board);
+
+        // установить св-во "хайлайтед"
+        // вызвать отрисовку подсветки (написать в классе дроГейм)
     }
+    unsetHighlited(board) {
+        for (let j = 0; j < board.boardSize; j++) {
+            for (let i = 0; i < board.boardSize; i++) {
+                board.boardCells[i][j].setHighlited(false);
+            }
+        }
+    }
+
 }
 
 class DrawGame {
-    drawBoard(board) { // рисуется доска (визуально)
+    drawBoard(board) { // перерисовывается доска (визуально)
+
+
         document.body.innerHTML = '';
         let body = document.querySelector('body');
         let tblBody = document.createElement("tbody");
@@ -116,7 +154,11 @@ class DrawGame {
                 cell.setAttribute('align', 'center');
                 cell.setAttribute('valign', 'center');
                 if(board.boardCells[i][j].color === 'black') {
-                    cell.setAttribute('bgcolor', 'gray');
+                    if (board.boardCells[i][j].getHighlited()) {
+                        cell.setAttribute('bgcolor', 'blue');
+                    } else {
+                        cell.setAttribute('bgcolor', 'gray');
+                    }
                 }
                 if (board.boardCells[i][j].currentChecker) {
                     let checker = document.createElement('img');
@@ -137,6 +179,17 @@ class DrawGame {
         body.appendChild(tbl);
         tbl.setAttribute("border", "2");
     }
+
+}
+
+function checkerClick(event) {
+    let clickedElement = event.target;
+    if (clickedElement.tagName === 'IMG') {
+        posY = clickedElement.parentNode.cellIndex;
+        posX = clickedElement.parentNode.parentElement.rowIndex;
+    }
+
+    board.clickProcessing(posX, posY);
 }
 
 boardSize = 8;
@@ -159,13 +212,3 @@ newGame.drawBoard(board);
 */
 
 document.addEventListener("click", event=>checkerClick(event));
-
-function checkerClick(event) {
-    let clickedElement = event.target;
-    if (clickedElement.tagName === 'IMG') {
-        posY = clickedElement.parentNode.cellIndex;
-        posX = clickedElement.parentNode.parentElement.rowIndex;
-    }
-
-    board.clickProcessing(posX, posY);
-}
