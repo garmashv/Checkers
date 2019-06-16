@@ -74,7 +74,7 @@ class Board { // доска
     clickProcessing(posX, posY) { // принимает координаты куда кликнули. вызываем этот метод в событии клика
         if (this.boardCells[posY][posX].currentChecker) {
             this.unsetHighlited(board);
-            if (this.boardCells[posY][posX].currentChecker.color === 'black') {
+            if (currentMove === 'black') {
                 this.boardCells[posY][posX].currentChecker.cellForMove1 = [posY+1, posX+1];
                 this.boardCells[posY][posX].currentChecker.cellForMove2 = [posY-1, posX+1];
 
@@ -93,7 +93,7 @@ class Board { // доска
                     this.boardCells[posY][posX].currentChecker.cellForMove2 = undefined;
                 }
             }
-            if (this.boardCells[posY][posX].currentChecker.color === 'white') {
+            if (currentMove === 'white') {
                 this.boardCells[posY][posX].currentChecker.cellForMove1 = [posY-1, posX-1];
                 this.boardCells[posY][posX].currentChecker.cellForMove2 = [posY+1, posX-1];
                 if ((this.boardCells[posY][posX].currentChecker.cellForMove1[0] < 0) ||
@@ -128,9 +128,15 @@ class Board { // доска
                 let currentChecker = new Checker(colorOfMoved, false, posX, posY);
                 this.boardCells[posY][posX].appendChecker(currentChecker);
                 this.unsetHighlited(board); // очистить подсветку
+
+                if (currentMove === 'white') {
+                    currentMove = 'black';
+                } else { currentMove = 'white'; }
+
             }
         }
         newGame.drawBoard(board);
+        console.log('Current move: ' + currentMove); // -------------------------------------------------------------------------------------
     }
     unsetHighlited(board) {
         for (let j = 0; j < board.boardSize; j++) {
@@ -178,6 +184,8 @@ class DrawGame {
         tbl.appendChild(tblBody);
         body.appendChild(tbl);
         tbl.setAttribute("border", "2");
+        //document.createElement('p').setAttribute('id', 'currentMove');
+        //document.querySelector('currentMove').innerHTML = currentMove;
     }
 }
 
@@ -198,4 +206,6 @@ board = new Board(boardSize);
 board.placeCheckers(boardSize);
 newGame = new DrawGame();
 newGame.drawBoard(board);
+let currentMove = 'white';
+console.log('Current move: ' + currentMove); // --------------------------------------------------------------------------------------------
 document.addEventListener("click", event=>checkerClick(event));
