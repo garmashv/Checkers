@@ -74,7 +74,7 @@ class Board { // доска
     clickProcessing(posX, posY) { // принимает координаты куда кликнули. вызываем этот метод в событии клика
         if (this.boardCells[posY][posX].currentChecker) {
             this.unsetHighlited(board);
-            if (currentMove === 'black') {
+            if ((this.boardCells[posY][posX].currentChecker.color === 'black') && (currentMove === 'black')) {
                 this.boardCells[posY][posX].currentChecker.cellForMove1 = [posY+1, posX+1];
                 this.boardCells[posY][posX].currentChecker.cellForMove2 = [posY-1, posX+1];
 
@@ -93,7 +93,7 @@ class Board { // доска
                     this.boardCells[posY][posX].currentChecker.cellForMove2 = undefined;
                 }
             }
-            if (currentMove === 'white') {
+            if ((this.boardCells[posY][posX].currentChecker.color === 'white') && (currentMove === 'white')) {
                 this.boardCells[posY][posX].currentChecker.cellForMove1 = [posY-1, posX-1];
                 this.boardCells[posY][posX].currentChecker.cellForMove2 = [posY+1, posX-1];
                 if ((this.boardCells[posY][posX].currentChecker.cellForMove1[0] < 0) ||
