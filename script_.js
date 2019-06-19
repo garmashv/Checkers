@@ -4,8 +4,8 @@ class Checker { // шашка
         this.isKing = false;
         this.posX = posX;
         this.posY = posY;
-        this.cellForMove1 = null;
-        this.cellForMove2 = null;
+        this.cellForMove1 = undefined;
+        this.cellForMove2 = undefined;
     }
 }
 
