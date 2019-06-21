@@ -80,62 +80,65 @@ class Board { // доска
 
             if ((this.boardCells[posY][posX].currentChecker.color === 'black') && (this.currentMove === 'black')) {
 
-                if ((posY+1 < 8) && (posX+1 < 8) && (this.boardCells[posY+1][posX+1].currentChecker === null)) {
+                if ((posY+1 < 8) && (posX+1 < 8) && (this.boardCells[posY+1][posX+1].currentChecker === null))
+                {
                     this.boardCells[posY][posX].currentChecker.cellForMove1 = [posY+1, posX+1];
+                    this.boardCells[posY+1][posX+1].setHighlited(true);
                 } else {
                     this.boardCells[posY][posX].currentChecker.cellForMove1 = undefined;
-                    if ((posY+2 < 8) && (posX+2 < 8) && (this.boardCells[posY+2][posX+2].currentChecker === null)) {
+                    if ((posY+2 < 8) && (posX+2 < 8) && (this.boardCells[posY+2][posX+2].currentChecker === null) &&
+                    (this.boardCells[posY+1][posX+1].currentChecker.color !== this.boardCells[posY][posX].currentChecker.color))
+                    {
                         this.boardCells[posY][posX].currentChecker.cellForMove1 = [posY+2, posX+2];
+                        this.boardCells[posY+2][posX+2].setHighlited(true);
                     }
                 }
 
                 if ((posY-1 >= 0) && (posX+1 < 8) && (this.boardCells[posY-1][posX+1].currentChecker === null)) {
                     this.boardCells[posY][posX].currentChecker.cellForMove2 = [posY-1, posX+1];
+                    this.boardCells[posY-1][posX+1].setHighlited(true);
                 } else {
                     this.boardCells[posY][posX].currentChecker.cellForMove2 = undefined;
-                    if ((posY-2 >= 0) && (posX+2 < 8) && (this.boardCells[posY-2][posX+2].currentChecker === null)) {
+                    if ((posY-2 >= 0) && (posX+2 < 8) && (this.boardCells[posY-2][posX+2].currentChecker === null) &&
+                    (this.boardCells[posY-1][posX+1].currentChecker.color !== this.boardCells[posY][posX].currentChecker.color))
+                    {
                         this.boardCells[posY][posX].currentChecker.cellForMove2 = [posY-2, posX+2];
+                        this.boardCells[posY-2][posX+2].setHighlited(true);
                     }
                 }
             }
 
             if ((this.boardCells[posY][posX].currentChecker.color === 'white') && (this.currentMove === 'white')) {
 
-                if ((posY-1 >= 0) && (posX-1 >= 0) && (this.boardCells[posY-1][posX-1].currentChecker === null)) {
+                if ((posY-1 >= 0) && (posX-1 >= 0) && (this.boardCells[posY-1][posX-1].currentChecker === null))
+                {
                     this.boardCells[posY][posX].currentChecker.cellForMove1 = [posY-1, posX-1];
+                    this.boardCells[posY-1][posX-1].setHighlited(true);
                 } else {
                     this.boardCells[posY][posX].currentChecker.cellForMove1 = undefined;
-                    if ((posY-2 >= 0) && (posX-2 >= 0) && (this.boardCells[posY-2][posX-2].currentChecker === null)) {
+                    if ((posY-2 >= 0) && (posX-2 >= 0) && (this.boardCells[posY-2][posX-2].currentChecker === null) &&
+                    (this.boardCells[posY-1][posX-1].currentChecker.color !== this.boardCells[posY][posX].currentChecker.color))
+                    {
                         this.boardCells[posY][posX].currentChecker.cellForMove1 = [posY-2, posX-2];
+                        this.boardCells[posY-2][posX-2].setHighlited(true);
                     }
                 }
 
                 if ((posY+1 < 8) && (posX-1 >= 0) && (this.boardCells[posY+1][posX-1].currentChecker === null)) {
                     this.boardCells[posY][posX].currentChecker.cellForMove2 = [posY+1, posX-1];
+                    this.boardCells[posY+1][posX-1].setHighlited(true);
                 } else {
                     this.boardCells[posY][posX].currentChecker.cellForMove2 = undefined;
-                    if ((posY+2 < 8) && (posX-2 >= 0) && (this.boardCells[posY+2][posX-2].currentChecker === null)) {
+                    if ((posY+2 < 8) && (posX-2 >= 0) && (this.boardCells[posY+2][posX-2].currentChecker === null) &&
+                    (this.boardCells[posY+1][posX-1].currentChecker.color !== this.boardCells[posY][posX].currentChecker.color))
+                    {
                         this.boardCells[posY][posX].currentChecker.cellForMove2 = [posY+2, posX-2];
+                        this.boardCells[posY+2][posX-2].setHighlited(true);
                     }
                 }
 
             }
 
-
-
-
-
-
-            // ---------------------------------------------------------------------------------------------------------
-
-            if (this.boardCells[posY][posX].currentChecker.cellForMove1 !== undefined) {
-                this.boardCells[this.boardCells[posY][posX].currentChecker.cellForMove1[0]][this.boardCells[posY][posX].
-                    currentChecker.cellForMove1[1]].setHighlited(true);
-            }
-            if (this.boardCells[posY][posX].currentChecker.cellForMove2 !== undefined) {
-                this.boardCells[this.boardCells[posY][posX].currentChecker.cellForMove2[0]][this.boardCells[posY][posX].
-                    currentChecker.cellForMove2[1]].setHighlited(true);
-            }
             this.lastX = posX;
             this.lastY = posY;
         } else {
