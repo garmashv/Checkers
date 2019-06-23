@@ -88,6 +88,7 @@ class Board { // доска
                     (this.boardCells[posY+1][posX+1].currentChecker.color !== this.boardCells[posY][posX].currentChecker.color))
                     {
                         this.boardCells[posY+2][posX+2].setHighlited(true);
+                        captureType = 1;
                     }
                 }
 
@@ -98,6 +99,7 @@ class Board { // доска
                     (this.boardCells[posY-1][posX+1].currentChecker.color !== this.boardCells[posY][posX].currentChecker.color))
                     {
                         this.boardCells[posY-2][posX+2].setHighlited(true);
+                        captureType = 2;
                     }
                 }
             }
@@ -112,6 +114,7 @@ class Board { // доска
                     (this.boardCells[posY-1][posX-1].currentChecker.color !== this.boardCells[posY][posX].currentChecker.color))
                     {
                         this.boardCells[posY-2][posX-2].setHighlited(true);
+                        captureType = 3;
                     }
                 }
 
@@ -122,6 +125,7 @@ class Board { // доска
                     (this.boardCells[posY+1][posX-1].currentChecker.color !== this.boardCells[posY][posX].currentChecker.color))
                     {
                         this.boardCells[posY+2][posX-2].setHighlited(true);
+                        captureType = 4;
                     }
                 }
 
@@ -139,10 +143,29 @@ class Board { // доска
                 this.boardCells[posY][posX].appendChecker(currentChecker);
                 this.unsetHighlited(board); // очистить подсветку
 
+                if ((Math.abs(posX-this.lastX) > 1) && (Math.abs(posY-this.lastY))) { // для проверки боя
+                    switch (captureType) {
+                        case 1:
+                            this.boardCells[this.lastY+1][this.lastX+1].removeChecker(); // бьем черной правую белую
+                            break;
+                        case 2:
+                            this.boardCells[this.lastY-1][this.lastX+1].removeChecker();
+                            break;
+                        case 3:
+                            this.boardCells[this.lastY-1][this.lastX-1].removeChecker();
+                            break;
+                        case 4:
+                            this.boardCells[this.lastY+1][this.lastX-1].removeChecker();
+                            break;
+                    }
+                }
+
                 if (this.currentMove === 'white') {
                     this.currentMove = 'black';
                 } else { this.currentMove = 'white'; }
+
             }
+
         }
 
         newGame.drawBoard(board);
@@ -201,6 +224,7 @@ class DrawGame {
         currentMoveColor.setAttribute('id', 'currentMove');
         document.querySelector('#currentMove').innerHTML = 'Current move: ' + currentMove.toUpperCase();
     }
+
 }
 
 function checkerClick(event) {
@@ -221,5 +245,6 @@ board.placeCheckers(boardSize);
 newGame = new DrawGame();
 newGame.drawBoard(board);
 let currentMove = 'white';
+let captureType = 0;
 document.querySelector('#currentMove').innerHTML = 'Current move: ' + currentMove.toUpperCase();
 document.addEventListener("click", event=>checkerClick(event));
