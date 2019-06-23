@@ -44,6 +44,9 @@ class Board { // доска
         this.boardSize = boardSize;
         this.boardCells = [];
         this.currentMove = 'white';
+        this.countBlack = 0;
+        this.countWhite = 0;
+
         for (let j = 0; j < boardSize; j++) {
             this.boardCells[j] = [];
             for (let i = 0; i < boardSize; i++) {
@@ -59,6 +62,7 @@ class Board { // доска
                 {
                     let currentChecker = new Checker('black', false, i, j);
                     this.boardCells[i][j].appendChecker(currentChecker);
+                    this.countBlack++;
                 }
             }
         }
@@ -68,6 +72,7 @@ class Board { // доска
                 {
                     let currentChecker = new Checker('white', false, i, j);
                     this.boardCells[i][j].appendChecker(currentChecker);
+                    this.countWhite++;
                 }
             }
         }
@@ -147,15 +152,19 @@ class Board { // доска
                     switch (captureType) {
                         case 1:
                             this.boardCells[this.lastY+1][this.lastX+1].removeChecker(); // бьем черной правую белую
+                            this.countWhite--;
                             break;
                         case 2:
-                            this.boardCells[this.lastY-1][this.lastX+1].removeChecker();
+                            this.boardCells[this.lastY-1][this.lastX+1].removeChecker(); //
+                            this.countWhite--;
                             break;
                         case 3:
                             this.boardCells[this.lastY-1][this.lastX-1].removeChecker();
+                            this.countBlack--;
                             break;
                         case 4:
                             this.boardCells[this.lastY+1][this.lastX-1].removeChecker();
+                            this.countBlack--;
                             break;
                     }
                 }
@@ -170,6 +179,8 @@ class Board { // доска
 
         newGame.drawBoard(board);
         newGame.drawCurrentMove(this.currentMove);
+        newGame.drawCountBlack(this.countBlack);
+        newGame.drawCountWhite(this.countWhite);
     }
 
     unsetHighlited(board) {
@@ -193,7 +204,7 @@ class DrawGame {
                 let cell = document.createElement("td");
                 cell.setAttribute('align', 'center');
                 cell.setAttribute('valign', 'center');
-                if(board.boardCells[i][j].color === 'black') {
+                if (board.boardCells[i][j].color === 'black') {
                     if (board.boardCells[i][j].getHighlited()) {
                         cell.setAttribute('bgcolor', 'blue');
                     } else {
@@ -219,10 +230,23 @@ class DrawGame {
         body.appendChild(tbl);
         tbl.setAttribute("border", "2");
     }
+
     drawCurrentMove(currentMove) {
         let currentMoveColor = document.createElement('p');
         currentMoveColor.setAttribute('id', 'currentMove');
         document.querySelector('#currentMove').innerHTML = 'Current move: ' + currentMove.toUpperCase();
+    }
+
+    drawCountBlack(countBlack) {
+        let countBlackP = document.createElement('p');
+        countBlackP.setAttribute('id', 'countBlack');
+        document.querySelector('#countBlack').innerHTML = 'Count Black: ' + countBlack;
+    }
+
+    drawCountWhite(countWhite) {
+        let countWhiteP = document.createElement('p');
+        countWhiteP.setAttribute('id', 'countWhite');
+        document.querySelector('#countWhite').innerHTML = 'Count White: ' + countWhite;
     }
 
 }
@@ -244,7 +268,12 @@ board = new Board(boardSize);
 board.placeCheckers(boardSize);
 newGame = new DrawGame();
 newGame.drawBoard(board);
+newGame.drawCountBlack(board.countBlack);
+newGame.drawCountWhite(board.countWhite);
+
 let currentMove = 'white';
+
 let captureType = 0;
+
 document.querySelector('#currentMove').innerHTML = 'Current move: ' + currentMove.toUpperCase();
 document.addEventListener("click", event=>checkerClick(event));
