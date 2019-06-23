@@ -4,8 +4,8 @@ class Checker { // шашка
         this.isKing = false;
         this.posX = posX;
         this.posY = posY;
-        this.cellForMove1 = undefined;
-        this.cellForMove2 = undefined;
+        //this.cellForMove1 = undefined;
+        //this.cellForMove2 = undefined;
     }
 }
 
@@ -82,27 +82,21 @@ class Board { // доска
 
                 if ((posY+1 < 8) && (posX+1 < 8) && (this.boardCells[posY+1][posX+1].currentChecker === null))
                 {
-                    this.boardCells[posY][posX].currentChecker.cellForMove1 = [posY+1, posX+1];
                     this.boardCells[posY+1][posX+1].setHighlited(true);
                 } else {
-                    this.boardCells[posY][posX].currentChecker.cellForMove1 = undefined;
                     if ((posY+2 < 8) && (posX+2 < 8) && (this.boardCells[posY+2][posX+2].currentChecker === null) &&
                     (this.boardCells[posY+1][posX+1].currentChecker.color !== this.boardCells[posY][posX].currentChecker.color))
                     {
-                        this.boardCells[posY][posX].currentChecker.cellForMove1 = [posY+2, posX+2];
                         this.boardCells[posY+2][posX+2].setHighlited(true);
                     }
                 }
 
                 if ((posY-1 >= 0) && (posX+1 < 8) && (this.boardCells[posY-1][posX+1].currentChecker === null)) {
-                    this.boardCells[posY][posX].currentChecker.cellForMove2 = [posY-1, posX+1];
                     this.boardCells[posY-1][posX+1].setHighlited(true);
                 } else {
-                    this.boardCells[posY][posX].currentChecker.cellForMove2 = undefined;
                     if ((posY-2 >= 0) && (posX+2 < 8) && (this.boardCells[posY-2][posX+2].currentChecker === null) &&
                     (this.boardCells[posY-1][posX+1].currentChecker.color !== this.boardCells[posY][posX].currentChecker.color))
                     {
-                        this.boardCells[posY][posX].currentChecker.cellForMove2 = [posY-2, posX+2];
                         this.boardCells[posY-2][posX+2].setHighlited(true);
                     }
                 }
@@ -112,27 +106,21 @@ class Board { // доска
 
                 if ((posY-1 >= 0) && (posX-1 >= 0) && (this.boardCells[posY-1][posX-1].currentChecker === null))
                 {
-                    this.boardCells[posY][posX].currentChecker.cellForMove1 = [posY-1, posX-1];
                     this.boardCells[posY-1][posX-1].setHighlited(true);
                 } else {
-                    this.boardCells[posY][posX].currentChecker.cellForMove1 = undefined;
                     if ((posY-2 >= 0) && (posX-2 >= 0) && (this.boardCells[posY-2][posX-2].currentChecker === null) &&
                     (this.boardCells[posY-1][posX-1].currentChecker.color !== this.boardCells[posY][posX].currentChecker.color))
                     {
-                        this.boardCells[posY][posX].currentChecker.cellForMove1 = [posY-2, posX-2];
                         this.boardCells[posY-2][posX-2].setHighlited(true);
                     }
                 }
 
                 if ((posY+1 < 8) && (posX-1 >= 0) && (this.boardCells[posY+1][posX-1].currentChecker === null)) {
-                    this.boardCells[posY][posX].currentChecker.cellForMove2 = [posY+1, posX-1];
                     this.boardCells[posY+1][posX-1].setHighlited(true);
                 } else {
-                    this.boardCells[posY][posX].currentChecker.cellForMove2 = undefined;
                     if ((posY+2 < 8) && (posX-2 >= 0) && (this.boardCells[posY+2][posX-2].currentChecker === null) &&
                     (this.boardCells[posY+1][posX-1].currentChecker.color !== this.boardCells[posY][posX].currentChecker.color))
                     {
-                        this.boardCells[posY][posX].currentChecker.cellForMove2 = [posY+2, posX-2];
                         this.boardCells[posY+2][posX-2].setHighlited(true);
                     }
                 }
@@ -141,7 +129,9 @@ class Board { // доска
 
             this.lastX = posX;
             this.lastY = posY;
+
         } else {
+
             if (this.boardCells[posY][posX].getHighlited()) { // если кликнуто по хайлайтед то вызвать метод хода
                 let colorOfMoved = this.boardCells[this.lastY][this.lastX].currentChecker.color; // перед удалением запомнить какого была цвета
                 this.boardCells[this.lastY][this.lastX].removeChecker();
@@ -154,9 +144,11 @@ class Board { // доска
                 } else { this.currentMove = 'white'; }
             }
         }
+
         newGame.drawBoard(board);
         newGame.drawCurrentMove(this.currentMove);
     }
+
     unsetHighlited(board) {
         for (let j = 0; j < board.boardSize; j++) {
             for (let i = 0; i < board.boardSize; i++) {
