@@ -271,8 +271,6 @@ newGame.drawBoard(board);
 newGame.drawCountBlack(board.countBlack);
 newGame.drawCountWhite(board.countWhite);
 
-let currentMove = 'white';
-
 let captureType = 0;
 
 document.querySelector('#currentMove').innerHTML = 'Current move: ' + currentMove.toUpperCase();
