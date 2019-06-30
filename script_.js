@@ -13,7 +13,7 @@ class Cell { // клетка
         this.posX = posX;
         this.posY = posY;
         this.currentChecker = null;
-        this.highlighted = false;
+        this.highlighted = false; // подсвечена ли клетка
     }
     getHighlighted() {
         return this.highlighted;
@@ -40,12 +40,13 @@ class Board { // доска
         this.lastX = null;
         this.lastY = null;
         this.boardSize = boardSize;
-        this.boardCells = [];
-        this.currentMove = 'white';
-        this.countBlack = 0;
+        this.boardCells = []; // массив клеток
+        this.currentMove = 'white'; // у кого текущий ход
+        this.countBlack = 0; // оставшиеся шашки
         this.countWhite = 0;
+        this.triad = []; // "триады" для проверки боя
 
-        for (let j = 0; j < boardSize; j++) {
+        for (let j = 0; j < boardSize; j++) { // формируем доску
             this.boardCells[j] = [];
             for (let i = 0; i < boardSize; i++) {
                 var color = (i + j) % 2 === 0 ? "black" : "white";
@@ -89,6 +90,7 @@ class Board { // доска
             if (this.boardCells[posY][posX].getHighlighted()) { // если кликнуто по подсвеченной клетке,
                 this.moveChecker(); // вызываем метод хода
 
+
                 /*if ((Math.abs(posX-this.lastX) > 1) && (Math.abs(posY-this.lastY))) {
                     switch (captureType) {
                         case 1:
@@ -112,16 +114,20 @@ class Board { // доска
 
                 if (this.currentMove === 'white') { // переход хода
                     this.currentMove = 'black';
-                } else { this.currentMove = 'white'; }
+                } else {
+                    this.currentMove = 'white';
+                }
+                this.checkMandatoryCapture();
 
             }
 
         }
 
         newGame.drawBoard(board); // перерисовать доску
-        newGame.drawCurrentMove(this.currentMove); // обновить индикацию цвета текущего хода,
+        newGame.drawCurrentMove(this.currentMove); // обновить индикацию чей ход,
         newGame.drawCountBlack(this.countBlack); // и сколько осталось шашек
         newGame.drawCountWhite(this.countWhite);
+
     }
 
     unsetHighlighted() { // погасить все подсвеченные клетки
@@ -161,6 +167,123 @@ class Board { // доска
         let currentChecker = new Checker(colorOfMoved, false, posX, posY);
         this.boardCells[posY][posX].appendChecker(currentChecker); /// ... и переставить на клетку куда ходим
         this.unsetHighlighted(board); // очистить подсветку
+    }
+
+    checkMandatoryCapture() { // проверка на обязательый бой
+        for (let j = 0; j < this.boardSize-3; j = j + 2) { // разбивка доски на "триады" (3 на 3 клетки),
+            this.triad[j] = []; // первые 9 "триад"
+            for (let i = 0; i < this.boardSize-3; i = i + 2) {
+                this.triad[j][i] = [];
+                this.triad[j][i][1] = this.boardCells[i][j];
+                this.triad[j][i][2] = this.boardCells[i+2][j];
+                this.triad[j][i][3] = this.boardCells[i+1][j+1];
+                this.triad[j][i][4] = this.boardCells[i][j+2];
+                this.triad[j][i][5] = this.boardCells[i+2][j+2];
+            }
+        }
+        for (let j = 1; j < this.boardSize-2; j = j + 2) { // вторые 9 "триад"
+            this.triad[j] = [];
+            for (let i = 1; i < this.boardSize-2; i = i + 2) {
+                this.triad[j][i] = [];
+                this.triad[j][i][1] = this.boardCells[i][j];
+                this.triad[j][i][2] = this.boardCells[i+2][j];
+                this.triad[j][i][3] = this.boardCells[i+1][j+1];
+                this.triad[j][i][4] = this.boardCells[i][j+2];
+                this.triad[j][i][5] = this.boardCells[i+2][j+2];
+            }
+        }
+
+        for (let j = 0; j < this.boardSize-3; j = j + 2) { // проверка по триадам на возможный бой
+            for (let i = 0; i < this.boardSize-3; i = i + 2) {
+
+                if (this.currentMove === 'white') { // если ходят белые...
+                    if (this.triad[j][i][5].currentChecker && this.triad[j][i][3].currentChecker) {
+                        if((((this.triad[j][i][5].currentChecker.color).charCodeAt(0) -
+                            (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) > 0) && // ... и белая может бить
+                            (this.triad[j][i][1].currentChecker === null)) {
+                            console.log('WHITE 5 capture 3! ' + new Date());
+                            this.triad[j][i][1].setHighlighted(true); // подсветить клетку куда прыгает бьющая
+                            //this.lastX = j;
+                            //this.lastY = i;
+
+
+                        }
+                    }
+                    if (this.triad[j][i][4].currentChecker && this.triad[j][i][3].currentChecker) {
+                        if((((this.triad[j][i][4].currentChecker.color).charCodeAt(0) -
+                            (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) > 0) &&
+                            (this.triad[j][i][2].currentChecker === null)) {
+                            console.log('WHITE 4 capture 3! ' + new Date());
+                            this.triad[j][i][2].setHighlighted(true);
+                        }
+                    }
+                }
+
+                if (this.currentMove === 'black') {
+                    if (this.triad[j][i][1].currentChecker && this.triad[j][i][3].currentChecker) {
+                        if((((this.triad[j][i][1].currentChecker.color).charCodeAt(0) -
+                            (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) < 0) &&
+                            (this.triad[j][i][5].currentChecker === null)) {
+                            console.log('BLACK 1 capture 3! ' + new Date());
+                            this.triad[j][i][5].setHighlighted(true);
+                        }
+                    }
+                    if (this.triad[j][i][2].currentChecker && this.triad[j][i][3].currentChecker) {
+                        if((((this.triad[j][i][2].currentChecker.color).charCodeAt(0) -
+                            (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) < 0) &&
+                            (this.triad[j][i][4].currentChecker === null)) {
+                            console.log('BLACK 2 capture 3! ' + new Date());
+                            this.triad[j][i][4].setHighlighted(true);
+                        }
+                    }
+                }
+
+            }
+        }
+
+        for (let j = 1; j < board.boardSize-2; j = j + 2) {
+            for (let i = 1; i < board.boardSize-2; i = i + 2) {
+                if (this.currentMove === 'white') {
+                    if (this.triad[j][i][5].currentChecker && this.triad[j][i][3].currentChecker) {
+                        if((((this.triad[j][i][5].currentChecker.color).charCodeAt(0) -
+                            (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) > 0) &&
+                            (this.triad[j][i][1].currentChecker === null)) {
+                            console.log('WHITE 5 capture 3! ' + new Date());
+                            this.triad[j][i][1].setHighlighted(true);
+                        }
+                    }
+                    if (this.triad[j][i][4].currentChecker && this.triad[j][i][3].currentChecker) {
+                        if((((this.triad[j][i][4].currentChecker.color).charCodeAt(0) -
+                            (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) > 0) &&
+                            (this.triad[j][i][2].currentChecker === null)) {
+                            console.log('WHITE 4 capture 3! ' + new Date());
+                            this.triad[j][i][2].setHighlighted(true);
+                        }
+                    }
+                }
+                if (this.currentMove === 'black') {
+                    if (this.triad[j][i][1].currentChecker && this.triad[j][i][3].currentChecker) {
+                        if((((this.triad[j][i][1].currentChecker.color).charCodeAt(0) -
+                            (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) < 0) &&
+                            (this.triad[j][i][5].currentChecker === null)) {
+                            console.log('BLACK 1 capture 3! ' + new Date());
+                            this.triad[j][i][5].setHighlighted(true);
+                        }
+                    }
+                    if (this.triad[j][i][2].currentChecker && this.triad[j][i][3].currentChecker) {
+                        if((((this.triad[j][i][2].currentChecker.color).charCodeAt(0) -
+                            (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) < 0) &&
+                            (this.triad[j][i][4].currentChecker === null)) {
+                            console.log('BLACK 2 capture 3! ' + new Date());
+                            this.triad[j][i][4].setHighlighted(true);
+                        }
+                    }
+                }
+
+
+            }
+        }
+
     }
 }
 
