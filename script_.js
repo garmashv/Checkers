@@ -37,15 +37,15 @@ class Cell { // клетка
 
 class Board { // доска
     constructor(boardSize) {
-        this.lastX = null;
+        this.lastX = null; // позиция последней кликнутой шашки
         this.lastY = null;
-        this.boardSize = boardSize;
+        this.boardSize = boardSize; // размер доски
         this.boardCells = []; // массив клеток
         this.currentMove = 'white'; // у кого текущий ход
         this.countBlack = 0; // оставшиеся шашки
         this.countWhite = 0;
         this.triad = []; // "триады" для проверки боя
-        this.mandatoryCaptureFlag = false;
+        this.mandatoryCaptureFlag = false; // признак обязательного боя
 
         for (let j = 0; j < boardSize; j++) { // формируем доску
             this.boardCells[j] = [];
@@ -79,18 +79,34 @@ class Board { // доска
     }
     clickProcessing(posX, posY) { // обработчик события клика
 
-        if ((this.boardCells[posY][posX].currentChecker) && (this.mandatoryCaptureFlag === false)) { // если кликнули по шашке,
-            this.unsetHighlighted(board); // и боя нет - погасить подсвеченные
-            this.highlightMove(); // вызываем метод подсветки клеток для хода
+        if ((this.boardCells[posY][posX].currentChecker) ) { // если кликнули по шашке,
 
+            if (this.mandatoryCaptureFlag === false) { // и боя нет -
+
+                this.unsetHighlighted(board); // погасить подсвеченные
+                this.highlightMove(); // вызываем метод подсветки клеток для хода
+
+            } else { // если кликнули по шашке и бой есть
+
+                //this.highlightCapture(); // вызываем метод подсветки клеток для боя
+                // ...
+
+            }
             this.lastX = posX; // запомнить позицию последней кликнутой шашки
             this.lastY = posY;
+
 
         } else {
 
             if (this.boardCells[posY][posX].getHighlighted()) { // если кликнуто по подсвеченной клетке,
 
-                this.moveChecker(); // вызываем метод хода
+                if (this.mandatoryCaptureFlag === false) { // и нет боя -
+                    this.moveChecker(); // вызываем метод хода
+                } else {
+                    this.captureChecker(); // вызываем метод боя
+                    // ...
+
+                }
 
                 if (this.currentMove === 'white') { // переход хода
                     this.currentMove = 'black';
@@ -146,19 +162,25 @@ class Board { // доска
         this.boardCells[this.lastY][this.lastX].removeChecker(); // ... убрать шашку, которой ходим...
         let currentChecker = new Checker(colorOfMoved, false, posX, posY);
         this.boardCells[posY][posX].appendChecker(currentChecker); /// ... и переставить на клетку куда ходим
-
-        if (this.mandatoryCaptureFlag) {
-            let underCaptureY = Math.abs((this.boardCells[posY][posY].currentChecker.posY + this.lastY) / 2);
-            let underCaptureX = Math.abs((this.boardCells[posX][posX].currentChecker.posX + this.lastX) / 2);
-            this.boardCells[underCaptureY][underCaptureX].removeChecker();
-            //this.countWhite--;
-            this.mandatoryCaptureFlag = false;
-        }
-
         this.unsetHighlighted(board); // очистить подсветку
     }
 
-    checkMandatoryCapture() { // проверка на обязательый бой
+    captureChecker(capturingChecker, posForJump) { // бой шашки
+        alert('реализовать бой шашки');
+
+
+        /*let underCaptureY = Math.abs((this.boardCells[posY][posX].currentChecker.posY + this.lastY) / 2);
+        let underCaptureX = Math.abs((this.boardCells[posY][posX].currentChecker.posX + this.lastX) / 2);
+        this.boardCells[underCaptureY][underCaptureX].removeChecker();*/
+
+        //this.countWhite--;
+        //this.mandatoryCaptureFlag = false;
+        //...
+        this.unsetHighlighted();
+
+    }
+
+    checkMandatoryCapture() { // проверка на обязательый бой и подсветка клеток для боя
         for (let j = 0; j < this.boardSize-3; j = j + 2) { // разбивка доски на "триады" (3 на 3 клетки),
             this.triad[j] = []; // первые 9 "триад"
             for (let i = 0; i < this.boardSize-3; i = i + 2) {
@@ -195,6 +217,7 @@ class Board { // доска
                             console.log('WHITE 5 capture 3! ' + new Date());
                             this.triad[j][i][1].setHighlighted(true); // подсветить клетку куда прыгает бьющая
                             this.mandatoryCaptureFlag = true;
+
                         }
                     }
                     if (this.triad[j][i][4].currentChecker && this.triad[j][i][3].currentChecker) {
@@ -341,7 +364,7 @@ class DrawGame {
 }
 
 function checkerClick(event) { // событие клика
-    let clickedElement = event.target;
+    let clickedElement = event.target; // из события клика - эл-т по которому кликнули
     if (clickedElement.tagName === 'IMG') { // если по шашке (рисунку)
         posY = clickedElement.parentNode.cellIndex;
         posX = clickedElement.parentNode.parentElement.rowIndex;
