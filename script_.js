@@ -184,11 +184,11 @@ class Board { // доска
         let currentChecker = new Checker(colorOfMoved, false, posX, posY);
         this.boardCells[posX][posY].appendChecker(currentChecker);
 
-        /*if (this.boardCells[(posX + this.lastX) / 2][(posY + this.lastY) / 2].currentChecker.color === 'black') {
+        if (this.boardCells[(posX + this.lastX) / 2][(posY + this.lastY) / 2].currentChecker.color === 'black') {
             this.countBlack--;
         } else {
             this.countWhite--;
-        }*/
+        }
 
         this.boardCells[(posX + this.lastX) / 2][(posY + this.lastY) / 2].removeChecker();
         //this.mandatoryCaptureFlag = false;
