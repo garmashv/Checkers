@@ -46,6 +46,7 @@ class Board { // доска
         this.countWhite = 0;
         this.triad = []; // "триады" для проверки боя
         this.mandatoryCaptureFlag = false; // признак обязательного боя
+        this.mayCapture = [];
 
         for (let j = 0; j < boardSize; j++) { // формируем доску
             this.boardCells[j] = [];
@@ -86,30 +87,46 @@ class Board { // доска
                 this.unsetHighlighted(board); // погасить подсвеченные
                 this.highlightMove(); // вызываем метод подсветки клеток для хода
 
-            } else { // если кликнули по шашке и бой есть
+                if (this.boardCells[posY][posX].currentChecker.color === this.currentMove) {
+                    this.lastX = posX; // запомнить позицию последней кликнутой шашки
+                    this.lastY = posY;
+                }
 
-                //this.highlightCapture(); // вызываем метод подсветки клеток для боя
-                // ...
+            } else { // если бой есть
+                var self = this;
+                this.mayCapture.forEach(function(element) {
+                    if (element[1] === posX && element[0] === posY) {
+                        self.lastX = posX;
+                        self.lastY = posY;
+                    }
+                });
+
+
 
             }
-            this.lastX = posX; // запомнить позицию последней кликнутой шашки
-            this.lastY = posY;
+
+
 
 
         } else {
 
             if (this.boardCells[posY][posX].getHighlighted()) { // если кликнуто по подсвеченной клетке,
 
+                if (this.lastX === null || this.lastY === null) {
+                    return;
+                }
+
                 if (this.mandatoryCaptureFlag === false) { // и нет боя -
                     this.moveChecker(); // вызываем метод хода
+
                 } else {
+
                     this.captureChecker(); // вызываем метод боя
-                    //
                 }
-                // this.mandatoryCaptureFlag === false
+                this.lastX = null;
+                this.lastY = null;
                 this.passTheMove();
                 this.mandatoryCaptureFlag = false;
-
                 this.checkMandatoryCapture();
             }
 
@@ -166,11 +183,15 @@ class Board { // доска
         this.boardCells[this.lastY][this.lastX].removeChecker();
         let currentChecker = new Checker(colorOfMoved, false, posX, posY);
         this.boardCells[posY][posX].appendChecker(currentChecker);
-        this.boardCells[(posY + this.lastY) / 2][(posX + this.lastX) / 2].removeChecker();
 
-        //this.countWhite--;
+        /*if (this.boardCells[(posX + this.lastX) / 2][(posY + this.lastY) / 2].currentChecker.color === 'black') {
+            this.countBlack--;
+        } else {
+            this.countWhite--;
+        }*/
+
+        this.boardCells[(posY + this.lastY) / 2][(posX + this.lastX) / 2].removeChecker();
         //this.mandatoryCaptureFlag = false;
-        //...
         this.unsetHighlighted();
     }
 
@@ -183,6 +204,7 @@ class Board { // доска
     }
 
     checkMandatoryCapture() { // проверка на обязательй бой и подсветка клеток для боя
+        this.mayCapture = [];
         for (let j = 0; j < this.boardSize-3; j = j + 2) { // разбивка доски на "триады" (3 на 3 клетки),
             this.triad[j] = []; // первые 9 "триад"
             for (let i = 0; i < this.boardSize-3; i = i + 2) {
@@ -216,22 +238,19 @@ class Board { // доска
                         if((((this.triad[j][i][5].currentChecker.color).charCodeAt(0) -
                             (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) > 0) && // ... и белая может бить
                             (this.triad[j][i][1].currentChecker === null)) {
-                            console.log('WHITE 5 capture 3! ' + new Date());
                             this.triad[j][i][1].setHighlighted(true); // подсветить клетку куда прыгает бьющая
                             this.mandatoryCaptureFlag = true;
-                            this.lastX = this.triad[j][i][5].currentChecker.posX;
-                            this.lastY = this.triad[j][i][5].currentChecker.posY;
+                            this.mayCapture.push([this.triad[j][i][5].currentChecker.posX, this.triad[j][i][5].currentChecker.posY]);
+
                         }
                     }
                     if (this.triad[j][i][4].currentChecker && this.triad[j][i][3].currentChecker) {
                         if((((this.triad[j][i][4].currentChecker.color).charCodeAt(0) -
                             (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) > 0) &&
                             (this.triad[j][i][2].currentChecker === null)) {
-                            console.log('WHITE 4 capture 3! ' + new Date());
                             this.triad[j][i][2].setHighlighted(true);
                             this.mandatoryCaptureFlag = true;
-                            this.lastX = this.triad[j][i][4].currentChecker.posX;
-                            this.lastY = this.triad[j][i][4].currentChecker.posY;
+                            this.mayCapture.push([this.triad[j][i][4].currentChecker.posX, this.triad[j][i][4].currentChecker.posY]);
                         }
                     }
                 }
@@ -241,22 +260,18 @@ class Board { // доска
                         if((((this.triad[j][i][1].currentChecker.color).charCodeAt(0) -
                             (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) < 0) &&
                             (this.triad[j][i][5].currentChecker === null)) {
-                            console.log('BLACK 1 capture 3! ' + new Date());
                             this.triad[j][i][5].setHighlighted(true);
                             this.mandatoryCaptureFlag = true;
-                            this.lastX = this.triad[j][i][1].currentChecker.posX;
-                            this.lastY = this.triad[j][i][1].currentChecker.posY;
+                            this.mayCapture.push([this.triad[j][i][1].currentChecker.posX, this.triad[j][i][1].currentChecker.posY]);
                         }
                     }
                     if (this.triad[j][i][2].currentChecker && this.triad[j][i][3].currentChecker) {
                         if((((this.triad[j][i][2].currentChecker.color).charCodeAt(0) -
                             (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) < 0) &&
                             (this.triad[j][i][4].currentChecker === null)) {
-                            console.log('BLACK 2 capture 3! ' + new Date());
                             this.triad[j][i][4].setHighlighted(true);
                             this.mandatoryCaptureFlag = true;
-                            this.lastX = this.triad[j][i][2].currentChecker.posX;
-                            this.lastY = this.triad[j][i][2].currentChecker.posY;
+                            this.mayCapture.push([this.triad[j][i][2].currentChecker.posX, this.triad[j][i][2].currentChecker.posY]);
                         }
                     }
                 }
@@ -271,22 +286,18 @@ class Board { // доска
                         if((((this.triad[j][i][5].currentChecker.color).charCodeAt(0) -
                             (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) > 0) &&
                             (this.triad[j][i][1].currentChecker === null)) {
-                            console.log('WHITE 5 capture 3! ' + new Date());
                             this.triad[j][i][1].setHighlighted(true);
                             this.mandatoryCaptureFlag = true;
-                            this.lastX = this.triad[j][i][5].currentChecker.posX;
-                            this.lastY = this.triad[j][i][5].currentChecker.posY;
+                            this.mayCapture.push([this.triad[j][i][5].currentChecker.posX, this.triad[j][i][5].currentChecker.posY]);
                         }
                     }
                     if (this.triad[j][i][4].currentChecker && this.triad[j][i][3].currentChecker) {
                         if((((this.triad[j][i][4].currentChecker.color).charCodeAt(0) -
                             (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) > 0) &&
                             (this.triad[j][i][2].currentChecker === null)) {
-                            console.log('WHITE 4 capture 3! ' + new Date());
                             this.triad[j][i][2].setHighlighted(true);
                             this.mandatoryCaptureFlag = true;
-                            this.lastX = this.triad[j][i][4].currentChecker.posX;
-                            this.lastY = this.triad[j][i][4].currentChecker.posY;
+                            this.mayCapture.push([this.triad[j][i][4].currentChecker.posX, this.triad[j][i][4].currentChecker.posY]);
                         }
                     }
                 }
@@ -295,22 +306,18 @@ class Board { // доска
                         if((((this.triad[j][i][1].currentChecker.color).charCodeAt(0) -
                             (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) < 0) &&
                             (this.triad[j][i][5].currentChecker === null)) {
-                            console.log('BLACK 1 capture 3! ' + new Date());
                             this.triad[j][i][5].setHighlighted(true);
                             this.mandatoryCaptureFlag = true;
-                            this.lastX = this.triad[j][i][1].currentChecker.posX;
-                            this.lastY = this.triad[j][i][1].currentChecker.posY;
+                            this.mayCapture.push([this.triad[j][i][1].currentChecker.posX, this.triad[j][i][1].currentChecker.posY]);
                         }
                     }
                     if (this.triad[j][i][2].currentChecker && this.triad[j][i][3].currentChecker) {
                         if((((this.triad[j][i][2].currentChecker.color).charCodeAt(0) -
                             (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) < 0) &&
                             (this.triad[j][i][4].currentChecker === null)) {
-                            console.log('BLACK 2 capture 3! ' + new Date());
                             this.triad[j][i][4].setHighlighted(true);
                             this.mandatoryCaptureFlag = true;
-                            this.lastX = this.triad[j][i][2].currentChecker.posX;
-                            this.lastY = this.triad[j][i][2].currentChecker.posY;
+                            this.mayCapture.push([this.triad[j][i][2].currentChecker.posX, this.triad[j][i][2].currentChecker.posY]);
                         }
                     }
                 }
