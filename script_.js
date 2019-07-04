@@ -80,14 +80,14 @@ class Board { // доска
     }
     clickProcessing(posX, posY) { // обработчик события клика
 
-        if ((this.boardCells[posY][posX].currentChecker) ) { // если кликнули по шашке,
+        if ((this.boardCells[posX][posY].currentChecker) ) { // если кликнули по шашке,
 
             if (this.mandatoryCaptureFlag === false) { // и боя нет -
 
                 this.unsetHighlighted(board); // погасить подсвеченные
                 this.highlightMove(); // вызываем метод подсветки клеток для хода
 
-                if (this.boardCells[posY][posX].currentChecker.color === this.currentMove) {
+                if (this.boardCells[posX][posY].currentChecker.color === this.currentMove) {
                     this.lastX = posX; // запомнить позицию последней кликнутой шашки
                     this.lastY = posY;
                 }
@@ -95,7 +95,7 @@ class Board { // доска
             } else { // если бой есть
                 var self = this;
                 this.mayCapture.forEach(function(element) {
-                    if (element[1] === posX && element[0] === posY) {
+                    if (element[0] === posX && element[1] === posY) {
                         self.lastX = posX;
                         self.lastY = posY;
                     }
@@ -110,7 +110,7 @@ class Board { // доска
 
         } else {
 
-            if (this.boardCells[posY][posX].getHighlighted()) { // если кликнуто по подсвеченной клетке,
+            if (this.boardCells[posX][posY].getHighlighted()) { // если кликнуто по подсвеченной клетке,
 
                 if (this.lastX === null || this.lastY === null) {
                     return;
@@ -148,41 +148,41 @@ class Board { // доска
     }
 
     highlightMove() { // подсветка клеток для хода
-        if ((this.boardCells[posY][posX].currentChecker.color === 'black') && (this.currentMove === 'black')) {
+        if ((this.boardCells[posX][posY].currentChecker.color === 'black') && (this.currentMove === 'black')) {
 
-            if ((posY+1 < this.boardSize) && (posX+1 < this.boardSize) && (this.boardCells[posY+1][posX+1].currentChecker === null))
+            if ((posX+1 < this.boardSize) && (posY+1 < this.boardSize) && (this.boardCells[posX+1][posY+1].currentChecker === null))
             {
-                this.boardCells[posY+1][posX+1].setHighlighted(true);
+                this.boardCells[posX+1][posY+1].setHighlighted(true);
             }
-            if ((posY-1 >= 0) && (posX+1 < this.boardSize) && (this.boardCells[posY-1][posX+1].currentChecker === null)) {
-                this.boardCells[posY-1][posX+1].setHighlighted(true);
+            if ((posX-1 >= 0) && (posY+1 < this.boardSize) && (this.boardCells[posX-1][posY+1].currentChecker === null)) {
+                this.boardCells[posX-1][posY+1].setHighlighted(true);
             }
         }
-        if ((this.boardCells[posY][posX].currentChecker.color === 'white') && (this.currentMove === 'white')) {
+        if ((this.boardCells[posX][posY].currentChecker.color === 'white') && (this.currentMove === 'white')) {
 
-            if ((posY-1 >= 0) && (posX-1 >= 0) && (this.boardCells[posY-1][posX-1].currentChecker === null))
+            if ((posX-1 >= 0) && (posY-1 >= 0) && (this.boardCells[posX-1][posY-1].currentChecker === null))
             {
-                this.boardCells[posY-1][posX-1].setHighlighted(true);
+                this.boardCells[posX-1][posY-1].setHighlighted(true);
             }
-            if ((posY+1 < this.boardSize) && (posX-1 >= 0) && (this.boardCells[posY+1][posX-1].currentChecker === null)) {
-                this.boardCells[posY+1][posX-1].setHighlighted(true);
+            if ((posX+1 < this.boardSize) && (posY-1 >= 0) && (this.boardCells[posX+1][posY-1].currentChecker === null)) {
+                this.boardCells[posX+1][posY-1].setHighlighted(true);
             }
         }
     }
 
     moveChecker() { // ход шашки
-        let colorOfMoved = this.boardCells[this.lastY][this.lastX].currentChecker.color; // перед удалением запомнить какого была цвета
-        this.boardCells[this.lastY][this.lastX].removeChecker(); // ... убрать шашку, которой ходим...
+        let colorOfMoved = this.boardCells[this.lastX][this.lastY].currentChecker.color; // перед удалением запомнить какого была цвета
+        this.boardCells[this.lastX][this.lastY].removeChecker(); // ... убрать шашку, которой ходим...
         let currentChecker = new Checker(colorOfMoved, false, posX, posY);
-        this.boardCells[posY][posX].appendChecker(currentChecker); /// ... и переставить на клетку куда ходим
+        this.boardCells[posX][posY].appendChecker(currentChecker); /// ... и переставить на клетку куда ходим
         this.unsetHighlighted(board); // очистить подсветку
     }
 
     captureChecker() { // бой шашки
-        let colorOfMoved = this.boardCells[this.lastY][this.lastX].currentChecker.color;
-        this.boardCells[this.lastY][this.lastX].removeChecker();
+        let colorOfMoved = this.boardCells[this.lastX][this.lastY].currentChecker.color;
+        this.boardCells[this.lastX][this.lastY].removeChecker();
         let currentChecker = new Checker(colorOfMoved, false, posX, posY);
-        this.boardCells[posY][posX].appendChecker(currentChecker);
+        this.boardCells[posX][posY].appendChecker(currentChecker);
 
         /*if (this.boardCells[(posX + this.lastX) / 2][(posY + this.lastY) / 2].currentChecker.color === 'black') {
             this.countBlack--;
@@ -190,7 +190,7 @@ class Board { // доска
             this.countWhite--;
         }*/
 
-        this.boardCells[(posY + this.lastY) / 2][(posX + this.lastX) / 2].removeChecker();
+        this.boardCells[(posX + this.lastX) / 2][(posY + this.lastY) / 2].removeChecker();
         //this.mandatoryCaptureFlag = false;
         this.unsetHighlighted();
     }
@@ -390,11 +390,11 @@ class DrawGame {
 function checkerClick(event) { // событие клика
     let clickedElement = event.target; // из события клика - эл-т по которому кликнули
     if (clickedElement.tagName === 'IMG') { // если по шашке (рисунку)
-        posY = clickedElement.parentNode.cellIndex;
-        posX = clickedElement.parentNode.parentElement.rowIndex;
+        posX = clickedElement.parentNode.cellIndex;
+        posY = clickedElement.parentNode.parentElement.rowIndex;
     } else { // если просто по клетке
-        posY = clickedElement.cellIndex;
-        posX = clickedElement.parentElement.rowIndex;
+        posX = clickedElement.cellIndex;
+        posY = clickedElement.parentElement.rowIndex;
     }
     board.clickProcessing(posX, posY);
 }
