@@ -2,7 +2,7 @@ class Checker { // шашка
     constructor(color, isKing, posX, posY) {
         this.color = color;
         this.isKing = false;
-        this.posX = posX;
+        this.posX = posX; // текущая позиция шашки
         this.posY = posY;
     }
 }
@@ -10,9 +10,9 @@ class Checker { // шашка
 class Cell { // клетка
     constructor(color, posX, posY) {
         this.color = color;
-        this.posX = posX;
+        this.posX = posX; // позиция клетки
         this.posY = posY;
-        this.currentChecker = null;
+        this.currentChecker = null; // текущая шашка в данной клетке
         this.highlighted = false; // подсвечена ли клетка
     }
     getHighlighted() {
@@ -56,7 +56,8 @@ class Board { // доска
             }
         }
     }
-    placeCheckers(boardSize) { // разместить все шашки
+
+    placeCheckers(boardSize) { // размещаем все шашки
         for (let j = 0; j < 3; j++) {
             for (let i = 0; i < boardSize; i++) {
                 if (this.boardCells[i][j].color === 'black')
@@ -78,56 +79,54 @@ class Board { // доска
             }
         }
     }
-    clickProcessing(posX, posY) { // обработчик события клика
+
+    clickProcessing(posX, posY) { // получаем координаты из обработчика события клика
 
         if ((this.boardCells[posX][posY].currentChecker) ) { // если кликнули по шашке,
 
             if (this.mandatoryCaptureFlag === false) { // и боя нет -
 
                 this.unsetHighlighted(board); // погасить подсвеченные
-                this.highlightMove(); // вызываем метод подсветки клеток для хода
+                this.highlightMove(); // и вызвать метод подсветки клеток для хода
 
+                // если кликнутая шашка того же цвета чей ход
                 if (this.boardCells[posX][posY].currentChecker.color === this.currentMove) {
                     this.lastX = posX; // запомнить позицию последней кликнутой шашки
                     this.lastY = posY;
                 }
 
-            } else { // если бой есть
+            } else { // если кликнули по шашке, и бой есть - проверить...
                 var self = this;
-                this.mayCapture.forEach(function(element) {
-                    if (element[0] === posX && element[1] === posY) {
-                        self.lastX = posX;
+                this.mayCapture.forEach(function(element) { // ... принадлежит ли кликнутая Ш
+                    if (element[0] === posX && element[1] === posY) { // массиву шашек кот. разрешен бой
+                        self.lastX = posX; // если да, то запомнить ее координаты
                         self.lastY = posY;
                     }
                 });
-
-
-
             }
-
-
-
 
         } else {
 
             if (this.boardCells[posX][posY].getHighlighted()) { // если кликнуто по подсвеченной клетке,
 
-                if (this.lastX === null || this.lastY === null) {
+                if (this.lastX === null || this.lastY === null) { // (и последней кликнутой Ш нет)
                     return;
                 }
 
                 if (this.mandatoryCaptureFlag === false) { // и нет боя -
-                    this.moveChecker(); // вызываем метод хода
+                    this.moveChecker(); // вызываем метод хода;
 
-                } else {
-
+                } else { // если кликнуто по подсвеченной клетке и есть бой -
+                    // (проверка на случай неправильного "вертикального" боя)
+                    if (Math.abs(this.lastX - posX) === 0) return;
                     this.captureChecker(); // вызываем метод боя
                 }
+
                 this.lastX = null;
                 this.lastY = null;
-                this.passTheMove();
-                this.mandatoryCaptureFlag = false;
-                this.checkMandatoryCapture();
+                this.passTheMove(); // передать ход
+                this.mandatoryCaptureFlag = false; // снять флаг боя
+                this.checkMandatoryCapture(); // проверка на обязательный бой
             }
 
         }
@@ -204,7 +203,9 @@ class Board { // доска
     }
 
     checkMandatoryCapture() { // проверка на обязательй бой и подсветка клеток для боя
+
         this.mayCapture = [];
+
         for (let j = 0; j < this.boardSize-3; j = j + 2) { // разбивка доски на "триады" (3 на 3 клетки),
             this.triad[j] = []; // первые 9 "триад"
             for (let i = 0; i < this.boardSize-3; i = i + 2) {
@@ -240,6 +241,7 @@ class Board { // доска
                             (this.triad[j][i][1].currentChecker === null)) {
                             this.triad[j][i][1].setHighlighted(true); // подсветить клетку куда прыгает бьющая
                             this.mandatoryCaptureFlag = true;
+                            // передать Ш которая может бить в "массив бьющих"
                             this.mayCapture.push([this.triad[j][i][5].currentChecker.posX, this.triad[j][i][5].currentChecker.posY]);
 
                         }
@@ -279,9 +281,12 @@ class Board { // доска
             }
         }
 
-        for (let j = 1; j < board.boardSize-2; j = j + 2) {
+        for (let j = 1; j < board.boardSize-2; j = j + 2) { // проверка по триадам на возможный бой, 2-я часть триад
+
             for (let i = 1; i < board.boardSize-2; i = i + 2) {
+
                 if (this.currentMove === 'white') {
+
                     if (this.triad[j][i][5].currentChecker && this.triad[j][i][3].currentChecker) {
                         if((((this.triad[j][i][5].currentChecker.color).charCodeAt(0) -
                             (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) > 0) &&
@@ -387,16 +392,16 @@ class DrawGame {
 
 }
 
-function checkerClick(event) { // событие клика
-    let clickedElement = event.target; // из события клика - эл-т по которому кликнули
-    if (clickedElement.tagName === 'IMG') { // если по шашке (рисунку)
+function checkerClick(event) { // обработчик события клика
+    let clickedElement = event.target; // из события клика получаем эл-т по которому кликнули
+    if (clickedElement.tagName === 'IMG') { // если кликнуто по шашке (рисунку)
         posX = clickedElement.parentNode.cellIndex;
         posY = clickedElement.parentNode.parentElement.rowIndex;
-    } else { // если просто по клетке
+    } else { // если кликнуто просто по клетке
         posX = clickedElement.cellIndex;
         posY = clickedElement.parentElement.rowIndex;
     }
-    board.clickProcessing(posX, posY);
+    board.clickProcessing(posX, posY); // передаем полученные координаты в метод их обработки
 }
 
 boardSize = 8;
