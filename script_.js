@@ -46,7 +46,7 @@ class Board { // доска
         this.countWhite = 0;
         this.triad = []; // "триады" для проверки боя
         this.mandatoryCaptureFlag = false; // признак обязательного боя
-        this.mayCapture = [];
+        this.mayCapture = []; // массив клеток (шашек), которым разрешено бить
 
         for (let j = 0; j < boardSize; j++) { // формируем доску
             this.boardCells[j] = [];
@@ -109,7 +109,7 @@ class Board { // доска
 
             if (this.boardCells[posX][posY].getHighlighted()) { // если кликнуто по подсвеченной клетке,
 
-                if (this.lastX === null || this.lastY === null) { // (и последней кликнутой Ш нет)
+                if (this.lastX === null || this.lastY === null) { // (и последней кликнутой шашки нет)
                     return;
                 }
 
@@ -124,6 +124,10 @@ class Board { // доска
 
                 this.lastX = null;
                 this.lastY = null;
+
+                // проверить: если был бой такого-то цвета и опять есть бой того же цвета -
+                // то ход не передавать (это реализовать надо)
+
                 this.passTheMove(); // передать ход
                 this.mandatoryCaptureFlag = false; // снять флаг боя
                 this.checkMandatoryCapture(); // проверка на обязательный бой
@@ -188,9 +192,7 @@ class Board { // доска
         } else {
             this.countWhite--;
         }
-
         this.boardCells[(posX + this.lastX) / 2][(posY + this.lastY) / 2].removeChecker();
-        //this.mandatoryCaptureFlag = false;
         this.unsetHighlighted();
     }
 
@@ -204,7 +206,7 @@ class Board { // доска
 
     checkMandatoryCapture() { // проверка на обязательй бой и подсветка клеток для боя
 
-        this.mayCapture = [];
+        this.mayCapture = []; // обнуляем массив клеток (шашек), которым разрешено бить
 
         for (let j = 0; j < this.boardSize-3; j = j + 2) { // разбивка доски на "триады" (3 на 3 клетки),
             this.triad[j] = []; // первые 9 "триад"
@@ -217,6 +219,7 @@ class Board { // доска
                 this.triad[j][i][5] = this.boardCells[i+2][j+2];
             }
         }
+
         for (let j = 1; j < this.boardSize-2; j = j + 2) { // вторые 9 "триад"
             this.triad[j] = [];
             for (let i = 1; i < this.boardSize-2; i = i + 2) {
@@ -236,20 +239,24 @@ class Board { // доска
                 if (this.currentMove === 'white') { // если ходят белые...
 
                     if (this.triad[j][i][5].currentChecker && this.triad[j][i][3].currentChecker) {
+
                         if((((this.triad[j][i][5].currentChecker.color).charCodeAt(0) -
                             (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) > 0) && // ... и белая может бить
                             (this.triad[j][i][1].currentChecker === null)) {
+
                             this.triad[j][i][1].setHighlighted(true); // подсветить клетку куда прыгает бьющая
                             this.mandatoryCaptureFlag = true;
                             // передать Ш которая может бить в "массив бьющих"
                             this.mayCapture.push([this.triad[j][i][5].currentChecker.posX, this.triad[j][i][5].currentChecker.posY]);
-
                         }
                     }
+
                     if (this.triad[j][i][4].currentChecker && this.triad[j][i][3].currentChecker) {
+
                         if((((this.triad[j][i][4].currentChecker.color).charCodeAt(0) -
                             (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) > 0) &&
                             (this.triad[j][i][2].currentChecker === null)) {
+
                             this.triad[j][i][2].setHighlighted(true);
                             this.mandatoryCaptureFlag = true;
                             this.mayCapture.push([this.triad[j][i][4].currentChecker.posX, this.triad[j][i][4].currentChecker.posY]);
@@ -258,26 +265,31 @@ class Board { // доска
                 }
 
                 if (this.currentMove === 'black') {
+
                     if (this.triad[j][i][1].currentChecker && this.triad[j][i][3].currentChecker) {
+
                         if((((this.triad[j][i][1].currentChecker.color).charCodeAt(0) -
                             (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) < 0) &&
                             (this.triad[j][i][5].currentChecker === null)) {
+
                             this.triad[j][i][5].setHighlighted(true);
                             this.mandatoryCaptureFlag = true;
                             this.mayCapture.push([this.triad[j][i][1].currentChecker.posX, this.triad[j][i][1].currentChecker.posY]);
                         }
                     }
+
                     if (this.triad[j][i][2].currentChecker && this.triad[j][i][3].currentChecker) {
+
                         if((((this.triad[j][i][2].currentChecker.color).charCodeAt(0) -
                             (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) < 0) &&
                             (this.triad[j][i][4].currentChecker === null)) {
+
                             this.triad[j][i][4].setHighlighted(true);
                             this.mandatoryCaptureFlag = true;
                             this.mayCapture.push([this.triad[j][i][2].currentChecker.posX, this.triad[j][i][2].currentChecker.posY]);
                         }
                     }
                 }
-
             }
         }
 
@@ -288,49 +300,57 @@ class Board { // доска
                 if (this.currentMove === 'white') {
 
                     if (this.triad[j][i][5].currentChecker && this.triad[j][i][3].currentChecker) {
+
                         if((((this.triad[j][i][5].currentChecker.color).charCodeAt(0) -
                             (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) > 0) &&
                             (this.triad[j][i][1].currentChecker === null)) {
+
                             this.triad[j][i][1].setHighlighted(true);
                             this.mandatoryCaptureFlag = true;
                             this.mayCapture.push([this.triad[j][i][5].currentChecker.posX, this.triad[j][i][5].currentChecker.posY]);
                         }
                     }
+
                     if (this.triad[j][i][4].currentChecker && this.triad[j][i][3].currentChecker) {
+
                         if((((this.triad[j][i][4].currentChecker.color).charCodeAt(0) -
                             (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) > 0) &&
                             (this.triad[j][i][2].currentChecker === null)) {
+
                             this.triad[j][i][2].setHighlighted(true);
                             this.mandatoryCaptureFlag = true;
                             this.mayCapture.push([this.triad[j][i][4].currentChecker.posX, this.triad[j][i][4].currentChecker.posY]);
                         }
                     }
                 }
+
                 if (this.currentMove === 'black') {
                     if (this.triad[j][i][1].currentChecker && this.triad[j][i][3].currentChecker) {
+
                         if((((this.triad[j][i][1].currentChecker.color).charCodeAt(0) -
                             (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) < 0) &&
                             (this.triad[j][i][5].currentChecker === null)) {
+
                             this.triad[j][i][5].setHighlighted(true);
                             this.mandatoryCaptureFlag = true;
                             this.mayCapture.push([this.triad[j][i][1].currentChecker.posX, this.triad[j][i][1].currentChecker.posY]);
                         }
                     }
+
                     if (this.triad[j][i][2].currentChecker && this.triad[j][i][3].currentChecker) {
+
                         if((((this.triad[j][i][2].currentChecker.color).charCodeAt(0) -
                             (this.triad[j][i][3].currentChecker.color).charCodeAt(0)) < 0) &&
                             (this.triad[j][i][4].currentChecker === null)) {
+
                             this.triad[j][i][4].setHighlighted(true);
                             this.mandatoryCaptureFlag = true;
                             this.mayCapture.push([this.triad[j][i][2].currentChecker.posX, this.triad[j][i][2].currentChecker.posY]);
                         }
                     }
                 }
-
-
             }
         }
-
     }
 }
 
@@ -384,8 +404,8 @@ class DrawGame {
         document.querySelector('#countBlack').innerHTML = 'Count Black: ' + countBlack;
     }
 
-    drawCountWhite(countWhite) {
-        let countWhiteP = document.createElement('p'); // ... и белых
+    drawCountWhite(countWhite) { // ... и белых
+        let countWhiteP = document.createElement('p');
         countWhiteP.setAttribute('id', 'countWhite');
         document.querySelector('#countWhite').innerHTML = 'Count White: ' + countWhite;
     }
@@ -395,13 +415,13 @@ class DrawGame {
 function checkerClick(event) { // обработчик события клика
     let clickedElement = event.target; // из события клика получаем эл-т по которому кликнули
     if (clickedElement.tagName === 'IMG') { // если кликнуто по шашке (рисунку)
-        posX = clickedElement.parentNode.cellIndex;
-        posY = clickedElement.parentNode.parentElement.rowIndex;
+        posX = clickedElement.parentNode.cellIndex; // позиция X - индекс ячейки в строке таблицы
+        posY = clickedElement.parentNode.parentElement.rowIndex; // позиция Y - номер строки в таблице
     } else { // если кликнуто просто по клетке
         posX = clickedElement.cellIndex;
         posY = clickedElement.parentElement.rowIndex;
     }
-    board.clickProcessing(posX, posY); // передаем полученные координаты в метод их обработки
+    board.clickProcessing(posX, posY); // вызываем метод обработки и передаем в него полученные координаты
 }
 
 boardSize = 8;
