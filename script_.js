@@ -45,9 +45,8 @@ class Board { // доска
         this.countBlack = 0; // оставшиеся шашки
         this.countWhite = 0;
         this.triad = []; // "триады" для проверки боя
-        this.mandatoryCaptureFlag = false; // признак обязательного боя
+        this.captureFlag = false; // признак обязательного боя
         this.mayCapture = []; // массив клеток (шашек), которым разрешено бить
-        this.lastCaptureColor = [];
 
         for (let j = 0; j < boardSize; j++) { // формируем доску
             this.boardCells[j] = [];
@@ -85,7 +84,7 @@ class Board { // доска
 
         if ((this.boardCells[posX][posY].currentChecker) ) { // если кликнули по шашке,
 
-            if (this.mandatoryCaptureFlag === false) { // и боя нет -
+            if (this.captureFlag === false) { // и боя нет -
 
                 this.unsetHighlighted(board); // погасить подсвеченные
                 this.highlightMove(); // и вызвать метод подсветки клеток для хода
@@ -114,8 +113,9 @@ class Board { // доска
                     return;
                 }
 
-                if (this.mandatoryCaptureFlag === false) { // и нет боя -
+                if (this.captureFlag === false) { // и нет боя -
                     this.moveChecker(); // вызываем метод хода;
+                    this.passTheMove(); // передать ход
 
                 } else { // если кликнуто по подсвеченной клетке и есть бой -
                     // (проверка на случай неправильного "вертикального" боя)
@@ -126,25 +126,12 @@ class Board { // доска
                 this.lastX = null;
                 this.lastY = null;
 
-                // проверить: если был бой такого-то цвета и опять есть бой того же цвета -
-                // то ход не передавать (это реализовать надо)
-
-                if (this.mandatoryCaptureFlag) {
-                    if (this.lastCaptureColor.length >1) {
-                        if ((this.lastCaptureColor[this.lastCaptureColor.length - 1]) === (this.lastCaptureColor[this.lastCaptureColor.length - 2])) {
-                            //
-                            console.log(this.lastCaptureColor);
-                        }
-                    }
-                } else {
-                    this.passTheMove(); // передать ход
+                // если белая била и белая бьет то ход не передавать (реализовать ниже)
+                if (this.checkCapture() !== true) {
+                    //this.passTheMove();
+                    console.log();
                 }
-                //this.passTheMove();
 
-
-
-
-                this.checkMandatoryCapture(); // проверка на обязательный бой
             }
 
         }
@@ -218,9 +205,9 @@ class Board { // доска
         }
     }
 
-    checkMandatoryCapture() { // проверка на обязательй бой и подсветка клеток для боя
+    checkCapture() { // проверка на обязательй бой и подсветка клеток для боя
 
-        this.mandatoryCaptureFlag = false; // снять флаг боя
+        this.captureFlag = false; // снять флаг боя
         this.mayCapture = []; // обнуляем массив клеток (шашек), которым разрешено бить
 
         for (let j = 0; j < this.boardSize-3; j = j + 2) { // разбивка доски на "триады" (3 на 3 клетки),
@@ -260,10 +247,9 @@ class Board { // доска
                             (this.triad[j][i][1].currentChecker === null)) {
 
                             this.triad[j][i][1].setHighlighted(true); // подсветить клетку куда прыгает бьющая
-                            this.mandatoryCaptureFlag = true;
+                            this.captureFlag = true;
                             // передать Ш которая может бить в "массив бьющих"
                             this.mayCapture.push([this.triad[j][i][5].currentChecker.posX, this.triad[j][i][5].currentChecker.posY]);
-                            this.lastCaptureColor.push('white');
                         }
                     }
 
@@ -274,9 +260,8 @@ class Board { // доска
                             (this.triad[j][i][2].currentChecker === null)) {
 
                             this.triad[j][i][2].setHighlighted(true);
-                            this.mandatoryCaptureFlag = true;
+                            this.captureFlag = true;
                             this.mayCapture.push([this.triad[j][i][4].currentChecker.posX, this.triad[j][i][4].currentChecker.posY]);
-                            this.lastCaptureColor.push('white');
                         }
                     }
                 }
@@ -290,9 +275,8 @@ class Board { // доска
                             (this.triad[j][i][5].currentChecker === null)) {
 
                             this.triad[j][i][5].setHighlighted(true);
-                            this.mandatoryCaptureFlag = true;
+                            this.captureFlag = true;
                             this.mayCapture.push([this.triad[j][i][1].currentChecker.posX, this.triad[j][i][1].currentChecker.posY]);
-                            this.lastCaptureColor.push('black');
                         }
                     }
 
@@ -303,9 +287,8 @@ class Board { // доска
                             (this.triad[j][i][4].currentChecker === null)) {
 
                             this.triad[j][i][4].setHighlighted(true);
-                            this.mandatoryCaptureFlag = true;
+                            this.captureFlag = true;
                             this.mayCapture.push([this.triad[j][i][2].currentChecker.posX, this.triad[j][i][2].currentChecker.posY]);
-                            this.lastCaptureColor.push('black');
                         }
                     }
                 }
@@ -325,9 +308,8 @@ class Board { // доска
                             (this.triad[j][i][1].currentChecker === null)) {
 
                             this.triad[j][i][1].setHighlighted(true);
-                            this.mandatoryCaptureFlag = true;
+                            this.captureFlag = true;
                             this.mayCapture.push([this.triad[j][i][5].currentChecker.posX, this.triad[j][i][5].currentChecker.posY]);
-                            this.lastCaptureColor.push('white');
                         }
                     }
 
@@ -338,9 +320,8 @@ class Board { // доска
                             (this.triad[j][i][2].currentChecker === null)) {
 
                             this.triad[j][i][2].setHighlighted(true);
-                            this.mandatoryCaptureFlag = true;
+                            this.captureFlag = true;
                             this.mayCapture.push([this.triad[j][i][4].currentChecker.posX, this.triad[j][i][4].currentChecker.posY]);
-                            this.lastCaptureColor.push('white');
                         }
                     }
                 }
@@ -353,9 +334,8 @@ class Board { // доска
                             (this.triad[j][i][5].currentChecker === null)) {
 
                             this.triad[j][i][5].setHighlighted(true);
-                            this.mandatoryCaptureFlag = true;
+                            this.captureFlag = true;
                             this.mayCapture.push([this.triad[j][i][1].currentChecker.posX, this.triad[j][i][1].currentChecker.posY]);
-                            this.lastCaptureColor.push('black');
                         }
                     }
 
@@ -366,9 +346,8 @@ class Board { // доска
                             (this.triad[j][i][4].currentChecker === null)) {
 
                             this.triad[j][i][4].setHighlighted(true);
-                            this.mandatoryCaptureFlag = true;
+                            this.captureFlag = true;
                             this.mayCapture.push([this.triad[j][i][2].currentChecker.posX, this.triad[j][i][2].currentChecker.posY]);
-                            this.lastCaptureColor.push('black');
                         }
                     }
                 }
