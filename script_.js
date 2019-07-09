@@ -123,28 +123,32 @@ class Board { // доска
                     // (проверка на случай неправильного "вертикального" боя)
                     if (Math.abs(this.lastX - posX) === 0) return;
                     this.captureChecker(); // вызываем метод боя
+
+                    this.checkCapture(); // цвет кто бьет
+
+                    console.log(this.checkCapture(), this.lastCaptureColor); // цвет кто бьет и кто бил
+                    console.log(this.checkCapture() === this.lastCaptureColor[this.lastCaptureColor.length - 1]);
+
+                    if (this.lastCaptureColor.length > 0) {
+
+                        if (this.checkCapture() === this.lastCaptureColor[this.lastCaptureColor.length - 1]) {
+                            this.checkCapture();
+                        } else {
+                            this.passTheMove();
+                            this.checkCapture();
+                        }
+
+                    }
+
                 }
 
                 this.lastX = null;
                 this.lastY = null;
 
 
-                // если (цвет кто бьет) и (цвет кто бил) совпадают - то ход не передавать (реализовать ниже)
-                let zzz = this.checkCapture(); // цвет кто бьет
-                console.log(zzz, this.lastCaptureColor); // цвет кто бьет и кто бил
-                console.log(zzz === this.lastCaptureColor[this.lastCaptureColor.length - 1]);
+                this.checkCapture();
 
 
-                if (this.lastCaptureColor.length > 0) {
-
-                    if ((zzz === this.lastCaptureColor[this.lastCaptureColor.length - 1])) {
-                        this.checkCapture();
-                    } else {
-                        this.passTheMove();
-                        this.checkCapture();
-                    }
-
-                }
 
             }
 
