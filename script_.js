@@ -84,6 +84,14 @@ class Board { // доска
 
     clickProcessing(posX, posY) { // получаем координаты из обработчика события клика
 
+
+        // ********************************* for debug *********************************
+        if (board.boardCells[posX][posY].currentChecker) {
+            console.log(board.boardCells[posX][posY].currentChecker.color,
+                board.boardCells[posX][posY].currentChecker.posX,
+                board.boardCells[posX][posY].currentChecker.posY);
+        } // ******************************* for debug *********************************
+
         if ((this.boardCells[posX][posY].currentChecker) ) { // если кликнули по шашке,
 
             if (this.captureFlag === false) { // и боя нет -
@@ -110,6 +118,8 @@ class Board { // доска
         } else {
 
             if (this.boardCells[posX][posY].getHighlighted()) { // если кликнуто по подсвеченной клетке,
+                console.log(posX, posY);
+
 
                 if (this.lastX === null || this.lastY === null) { // (и последней кликнутой шашки нет)
                     return;
