@@ -84,7 +84,6 @@ class Board { // доска
 
     clickProcessing(posX, posY) { // получаем координаты из обработчика события клика
 
-
         // ********************************* for debug *********************************
         if (board.boardCells[posX][posY].currentChecker) {
             console.log(board.boardCells[posX][posY].currentChecker.color,
@@ -118,8 +117,10 @@ class Board { // доска
         } else {
 
             if (this.boardCells[posX][posY].getHighlighted()) { // если кликнуто по подсвеченной клетке,
-                console.log(posX, posY);
 
+                // ********************************* for debug *********************************
+                console.log(posX, posY);
+                // ********************************* for debug *********************************
 
                 if (this.lastX === null || this.lastY === null) { // (и последней кликнутой шашки нет)
                     return;
@@ -132,7 +133,10 @@ class Board { // доска
 
                 } else { // если кликнуто по подсвеченной клетке и есть бой -
                     // (проверка на случай неправильного "вертикального" боя)
-                    if (Math.abs(this.lastX - posX) === 0) return;
+                    if ((Math.abs(this.lastX - posX) === 0) || (Math.abs(this.lastX - posX) !== 2)) {
+                        return;
+                    }
+
                     this.captureChecker(); // вызываем метод боя
 
                     this.checkCapture(); // начиная с этой строки и далее след. блок (if) малообъясним :)
