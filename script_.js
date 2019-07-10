@@ -48,6 +48,7 @@ class Board { // доска
         this.captureFlag = false; // признак обязательного боя
         this.mayCapture = []; // массив клеток (шашек), которым разрешено бить
         this.lastCaptureColor = [];
+        this.lastCaptureCoord = [];
         this.captureColor = [];
 
         for (let j = 0; j < boardSize; j++) { // формируем доску
@@ -132,20 +133,22 @@ class Board { // доска
                     this.lastCaptureColor = []; // и обнулить массив где цвет последних бьющих
 
                 } else { // если кликнуто по подсвеченной клетке и есть бой -
-                    // (проверка на случай неправильного "вертикального" боя)
-                    if ((Math.abs(this.lastX - posX) === 0) || (Math.abs(this.lastX - posX) !== 2)) {
+                    // проверка на случай "неправильного" боя
+                    if ((Math.abs(this.lastX - posX) !== 2) || (Math.abs(this.lastY - posY) !== 2)) {
                         return;
                     }
 
                     this.captureChecker(); // вызываем метод боя
 
-                    this.checkCapture(); // начиная с этой строки и далее след. блок (if) малообъясним :)
+                    this.checkCapture(posX, posY); // начиная с этой строки и далее след. блок (if) малообъясним :)
                     if (this.lastCaptureColor.length > 0) { // если массив где цвет последних бьющих...
-                        if (this.checkCapture() === this.lastCaptureColor[this.lastCaptureColor.length - 1]) {
-                            this.checkCapture(); // ^^^^^^^^ и эта строка - так надо :)
+                        if (this.checkCapture(posX, posY) === this.lastCaptureColor[this.lastCaptureColor.length - 1] ||
+                        this.lastCaptureCoord[(this.lastCaptureCoord.length - 2)][0] !== this.boardCells[posX][posY].currentChecker.posX) {
+                            console.log(this.lastCaptureCoord);
+                            this.checkCapture(posX, posY); // ^^^^^^^^ и эта строка - так надо :)
                         } else { // вобщем это все сводится к тому, чтоб после каждого боя проверять еще на
                             this.passTheMove(); // бой (того же цвета), и если его нет, то передавать ход
-                            this.checkCapture();
+                            this.checkCapture(posX, posY);
                         }
                     }
 
@@ -232,11 +235,12 @@ class Board { // доска
         }
     }
 
-    checkCapture() { // проверка на обязательй бой и подсветка клеток для боя
+    checkCapture(posX, posY) { // проверка на обязательй бой и подсветка клеток для боя
 
         this.captureFlag = false; // снять флаг боя
         this.mayCapture = []; // обнуляем массив клеток (шашек), которым разрешено бить
         this.captureColor = [];
+        this.lastCaptureCoord.push([posX, posY]);
 
         for (let j = 0; j < this.boardSize-3; j = j + 2) { // разбивка доски на "триады" (3 на 3 клетки),
             this.triad[j] = []; // первые 9 "триад"
