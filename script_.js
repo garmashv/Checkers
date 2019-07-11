@@ -145,12 +145,10 @@ class Board { // доска
                         if (this.checkCapture(posX, posY) === this.lastCaptureColor[this.lastCaptureColor.length - 1]) {
                             console.log(this.lastCaptureCoord);
                             this.checkCapture(posX, posY); // ^^^^^^^^ и эта строка - так надо :)
+
+                            // ***************************** РЕАЛИЗОВАТЬ !!! ******************************
                             // если 2 шашки бьют одновременно то после первого боя передать ход
-                            if ((this.lastCaptureCoord[(this.lastCaptureCoord.length - 2)][0]) ===
-                                (this.boardCells[posX][posY].currentChecker.posX)) {
-                                this.unsetHighlighted(board);
-                                this.passTheMove();
-                            }
+                            // ****************************************************************************
 
                         } else { // вобщем это все сводится к тому, чтоб после каждого боя проверять еще на
                             this.passTheMove(); // бой (того же цвета), и если его нет, то передавать ход
