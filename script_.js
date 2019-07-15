@@ -46,10 +46,8 @@ class Board { // доска
         this.countWhite = 0;
         this.triad = []; // "триады" для проверки боя
         this.captureFlag = false; // признак обязательного боя
-        this.mayCapture = []; // массив клеток (шашек), которым разрешено бить
-        this.lastCaptureColor = []; // здесь берем цвет предыущей бьющей шашки
-        this.lastCaptureCoord = []; // здесь берем координаты предыущей бьющей шашки
-        this.captureColor = []; // цвет бьющей (текущей) шашки
+        this.mayCapture = []; // массив координат шашек, которым разрешено бить на данный момент
+        this.captureCheckers = []; // "одновременно" бьющие шашки (макимум 2?)
 
         for (let j = 0; j < boardSize; j++) { // формируем доску
             this.boardCells[j] = [];
@@ -130,7 +128,6 @@ class Board { // доска
                 if (this.captureFlag === false) { // и нет боя -
                     this.moveChecker(); // вызываем метод хода;
                     this.passTheMove(); // передать ход
-                    this.lastCaptureColor = []; // и обнулить массив где цвет последних бьющих
 
                 } else { // если кликнуто по подсвеченной клетке и есть бой -
                     // проверка на случай "неправильного" боя
@@ -139,28 +136,17 @@ class Board { // доска
                     }
 
                     this.captureChecker(); // вызываем метод боя
+                    this.checkCapture(); // проверка боя
 
-                    this.checkCapture(posX, posY); // начиная с этой строки и далее след. блок (if) малообъясним :)
-                    if (this.lastCaptureColor.length > 0) { // если массив где цвет последних бьющих...
-                        if (this.checkCapture(posX, posY) === this.lastCaptureColor[this.lastCaptureColor.length - 1]) {
-                            console.log(this.lastCaptureCoord);
-                            this.checkCapture(posX, posY); // ^^^^^^^^ и эта строка - так надо :)
-
-                            // ***************************** РЕАЛИЗОВАТЬ !!! ******************************
-                            // если 2 шашки бьют одновременно то после первого боя передать ход
-                            // ****************************************************************************
-
-                        } else { // вобщем это все сводится к тому, чтоб после каждого боя проверять еще на
-                            this.passTheMove(); // бой (того же цвета), и если его нет, то передавать ход
-                            this.checkCapture(posX, posY);
-                        }
+                    if (this.captureCheckers.length === 0) {
+                        this.passTheMove(); // передать ход
                     }
 
                 }
 
                 this.lastX = null; // очищаем позицию последней кликнутой шашки
                 this.lastY = null;
-                this.checkCapture(); //  проверка боя
+                this.checkCapture(); // проверка боя
 
             }
 
@@ -222,10 +208,8 @@ class Board { // доска
 
         if (this.boardCells[(posX + this.lastX) / 2][(posY + this.lastY) / 2].currentChecker.color === 'black') {
             this.countBlack--;
-            this.lastCaptureColor.push('white'); // это для множественного боя в методе clickProcessing()
         } else {
             this.countWhite--;
-            this.lastCaptureColor.push('black');
         } // координаты битой - среднее арифм. между старой и новой позицией бьющей
         this.boardCells[(posX + this.lastX) / 2][(posY + this.lastY) / 2].removeChecker(); // убираем битую
         this.unsetHighlighted();
@@ -239,12 +223,11 @@ class Board { // доска
         }
     }
 
-    checkCapture(posX, posY) { // проверка на обязательй бой и подсветка клеток для боя
+    checkCapture() { // проверка на обязательй бой и подсветка клеток для боя
 
         this.captureFlag = false; // снять флаг боя
-        this.mayCapture = []; // обнуляем массив клеток (шашек), которым разрешено бить
-        this.captureColor = []; // обнуляем массив где цвет бьющей шашки
-        this.lastCaptureCoord.push([posX, posY]); // заполняем массив где координаты предудущих бьющих
+        this.mayCapture = []; // обнуляем массив координат шашек, которым разрешено бить
+        this.captureCheckers = []; // обнуляем массив бьющих шашек
 
         for (let j = 0; j < this.boardSize-3; j = j + 2) { // разбивка доски на "триады" (3 на 3 клетки),
             this.triad[j] = []; // первые 9 "триад"
@@ -284,11 +267,11 @@ class Board { // доска
 
                             this.triad[j][i][1].setHighlighted(true); // подсветить клетку куда прыгает бьющая
                             this.captureFlag = true;
-                            // передать шашку которая может бить в "массив бьющих"
+                            // передать координаты шашки которая может бить в массив координат бьющих шашек
                             this.mayCapture.push([this.triad[j][i][5].currentChecker.posX,
                                 this.triad[j][i][5].currentChecker.posY]);
-                            // заполняем массив где цвет последних бьющих
-                            this.captureColor.push(this.triad[j][i][5].currentChecker.color);
+                            // добавляем в массив бьющих очередную бьющую шашку
+                            this.captureCheckers.push(this.triad[j][i][5].currentChecker);
                         }
                     }
 
@@ -302,7 +285,7 @@ class Board { // доска
                             this.captureFlag = true;
                             this.mayCapture.push([this.triad[j][i][4].currentChecker.posX,
                                 this.triad[j][i][4].currentChecker.posY]);
-                            this.captureColor.push(this.triad[j][i][4].currentChecker.color);
+                            this.captureCheckers.push(this.triad[j][i][4].currentChecker);
                         }
                     }
                 }
@@ -319,7 +302,7 @@ class Board { // доска
                             this.captureFlag = true;
                             this.mayCapture.push([this.triad[j][i][1].currentChecker.posX,
                                 this.triad[j][i][1].currentChecker.posY]);
-                            this.captureColor.push(this.triad[j][i][1].currentChecker.color);
+                            this.captureCheckers.push(this.triad[j][i][1].currentChecker);
                         }
                     }
 
@@ -333,7 +316,7 @@ class Board { // доска
                             this.captureFlag = true;
                             this.mayCapture.push([this.triad[j][i][2].currentChecker.posX,
                                 this.triad[j][i][2].currentChecker.posY]);
-                            this.captureColor.push(this.triad[j][i][2].currentChecker.color);
+                            this.captureCheckers.push(this.triad[j][i][2].currentChecker);
                         }
                     }
                 }
@@ -356,7 +339,7 @@ class Board { // доска
                             this.captureFlag = true;
                             this.mayCapture.push([this.triad[j][i][5].currentChecker.posX,
                                 this.triad[j][i][5].currentChecker.posY]);
-                            this.captureColor.push(this.triad[j][i][5].currentChecker.color);
+                            this.captureCheckers.push(this.triad[j][i][5].currentChecker);
                         }
                     }
 
@@ -370,7 +353,7 @@ class Board { // доска
                             this.captureFlag = true;
                             this.mayCapture.push([this.triad[j][i][4].currentChecker.posX,
                                 this.triad[j][i][4].currentChecker.posY]);
-                            this.captureColor.push(this.triad[j][i][4].currentChecker.color);
+                            this.captureCheckers.push(this.triad[j][i][4].currentChecker);
                         }
                     }
                 }
@@ -386,7 +369,7 @@ class Board { // доска
                             this.captureFlag = true;
                             this.mayCapture.push([this.triad[j][i][1].currentChecker.posX,
                                 this.triad[j][i][1].currentChecker.posY]);
-                            this.captureColor.push(this.triad[j][i][1].currentChecker.color);
+                            this.captureCheckers.push(this.triad[j][i][1].currentChecker);
                         }
                     }
 
@@ -400,13 +383,13 @@ class Board { // доска
                             this.captureFlag = true;
                             this.mayCapture.push([this.triad[j][i][2].currentChecker.posX,
                                 this.triad[j][i][2].currentChecker.posY]);
-                            this.captureColor.push(this.triad[j][i][2].currentChecker.color);
+                            this.captureCheckers.push(this.triad[j][i][2].currentChecker);
                         }
                     }
                 }
             }
         }
-        return this.captureColor[0]; // метод возвращает цвет шашки/ек (т.к. их 2) кот. может бить на данный момент
+        return this.captureCheckers; // возвращаем массив шашкек, кот. могут бить на данный момент (макс. 2)
     }
 }
 
