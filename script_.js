@@ -48,6 +48,8 @@ class Board { // доска
         this.captureFlag = false; // признак обязательного боя
         this.mayCapture = []; // массив координат шашек, которым разрешено бить на данный момент
         this.captureCheckers = []; // "одновременно" бьющие шашки (макимум 2?)
+        this.posX2 = null; // позиция шашки которая била последней (для случай мультибоя)
+        this.posY2 = null;
 
         for (let j = 0; j < boardSize; j++) { // формируем доску
             this.boardCells[j] = [];
@@ -105,7 +107,7 @@ class Board { // доска
 
             } else { // если кликнули по шашке, и бой есть - проверить...
                 var self = this;
-                this.mayCapture.forEach(function(element) { // ... принадлежит ли кликнутая Ш
+                this.mayCapture.forEach(function(element) { // ... принадлежит ли кликнутая шашка
                     if (element[0] === posX && element[1] === posY) { // массиву шашек кот. разрешен бой
                         self.lastX = posX; // если да, то запомнить ее координаты
                         self.lastY = posY;
@@ -138,8 +140,23 @@ class Board { // доска
                     this.captureChecker(); // вызываем метод боя
                     this.checkCapture(); // проверка боя
 
-                    if (this.captureCheckers.length === 0) {
+                    this.posX2 = posX; // запомнить позицию последней шашки кот. ударила
+                    this.posY2 = posY;
+
+                    if ((this.captureCheckers.length === 1) && // если после проверки на бой бьет только 1 шашка
+                        (this.captureCheckers[0].posX !== this.posX2) && // и это не та что била последней
+                        (this.captureCheckers[0].posY !== this.posY2)) {
+
+                        this.passTheMove(); // то передать ход,
+                        this.unsetHighlighted();
+                        this.checkCapture(); // проверить на бой
+                    }
+
+                    if (this.captureCheckers.length === 0 && (this.currentMove === // если боя не было и ход у тех,
+                        this.boardCells[board.posX2][board.posY2].currentChecker.color)) { // что били последними
+
                         this.passTheMove(); // передать ход
+                        //newGame.drawBoard(board);
                     }
 
                 }
