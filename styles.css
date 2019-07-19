@@ -6,10 +6,15 @@ td {
     height: 40px;
    }
 
+img {
+    cursor: pointer;
+}
+
+/*
 .blue {
     background-color: blue;
 }
 
 .red {
     background-color: red;
-}
+}*/
