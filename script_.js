@@ -83,6 +83,13 @@ class Board { // доска
         }
     }
 
+    placeCheckersPHP(stringBoard) {
+        // считать строку из checkers.php и в соответствии с ней построить объект "доска"
+
+    }
+
+
+
     clickProcessing(posX, posY) { // получаем координаты из обработчика события клика
 
         // ********************************* for debug *********************************
@@ -480,9 +487,41 @@ function checkerClick(event) { // обработчик события клика
     board.clickProcessing(posX, posY); // вызываем метод обработки и передаем в него полученные координаты
 }
 
+class PHPLinks {
+    // вызвать загрузку строки
+    // считать строку посимвольно и разместить шашки
+    getCheckers() { // получить строку с шашками из ...
+
+        const request = new XMLHttpRequest(); // Создаем экземпляр класса XMLHttpRequest
+        const url = "checkers.php"; // Указываем путь к файлу на сервере, кот. будет обрабатывать запрос
+
+        /* Указываем что соединение будет POST и что путь к файлу в переменной url, и что запрос асинхронный,
+        по умолчанию так и есть не стоит его указывать, еще есть 4-й параметр пароль авторизации, необязателен.*/
+        request.open("POST", url, true);
+        request.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); // в заголовке -
+        request.addEventListener("readystatechange", () => { // что тип передаваемых данных закодирован
+            if(request.readyState === 4 && request.status === 200) {
+                console.log(request.responseText);
+            }
+        });
+        request.send(); // здесь и передаем строку с данными, которую формировали выше, и собственно выполняем запрос
+    }
+
+    putCheckers()  {
+        // отправляет строку
+    }
+}
+
 boardSize = 8;
 board = new Board(boardSize);
 board.placeCheckers(boardSize);
+
+// вызываем аякс-запрос
+callAjax = new PHPLinks();
+callAjax.getCheckers();
+
+// вызываем board.placeCheckersPHP(boardSize);
+
 newGame = new DrawGame();
 newGame.drawBoard(board);
 newGame.drawCountBlack(board.countBlack);
