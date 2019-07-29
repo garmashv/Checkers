@@ -50,6 +50,7 @@ class Board { // доска
         this.captureCheckers = []; // "одновременно" бьющие шашки (макимум 2?)
         this.posX2 = null; // позиция шашки которая била последней (для случай мультибоя)
         this.posY2 = null;
+        this.checkersString = null; // для строки из PHP для хранения начального расположения шашек
 
         for (let j = 0; j < boardSize; j++) { // формируем доску
             this.boardCells[j] = [];
@@ -60,7 +61,7 @@ class Board { // доска
         }
     }
 
-    placeCheckers(boardSize) { // размещаем все шашки
+    /*placeCheckers(boardSize) { // размещаем все шашки
         for (let j = 0; j < 3; j++) {
             for (let i = 0; i < boardSize; i++) {
                 if (this.boardCells[i][j].color === 'black')
@@ -81,20 +82,23 @@ class Board { // доска
                 }
             }
         }
-    }
+    }*/
 
     placeCheckersPHP(boardSize) { // расставляем шашки в соотв. со считанной из checkers.php строкой
-        let k = 1;
-        for (let j = 0; j < boardSize; j++) { // считать строку посимвольно и разместить шашки
+        let k = 0; // (считать строку посимвольно и разместить шашки в соответствии)
+        for (let j = 0; j < boardSize; j++) {
             for (let i = 0; i < boardSize; i++) {
-                console.log(k);
-                k++;
-                /*if (checkersString)
-                {
+                if (this.checkersString[k] === '1') { // каждый символ строки как элемент массива
                     let currentChecker = new Checker('black', false, i, j);
                     this.boardCells[i][j].appendChecker(currentChecker);
                     this.countBlack++;
-                }*/
+                }
+                if (this.checkersString[k] === '2') {
+                    let currentChecker = new Checker('white', false, i, j);
+                    this.boardCells[i][j].appendChecker(currentChecker);
+                    this.countWhite++;
+                }
+                k++;
             }
         }
     }
@@ -174,7 +178,6 @@ class Board { // доска
                         this.boardCells[board.posX2][board.posY2].currentChecker.color)) { // что били последними
 
                         this.passTheMove(); // передать ход
-                        //newGame.drawBoard(board);
                     }
 
                 }
@@ -486,23 +489,22 @@ class DrawGame {
 
 }
 
-class PHPLinks {
-
+class PHPLinks { // класс для связи с PHP-скриптами для сохранеия/обновления состояния доски на/с сервер(а)
     getCheckersString() { // получить строку с шашками из ... (пока строка в PHP файле, потом из базы)
         const request = new XMLHttpRequest(); // создаем экземпляр класса (объект) XMLHttpRequest
         const url = "checkers.php"; // Указываем путь к файлу на сервере, кот. будет обрабатывать запрос
-        /* указываем что соединение будет POST, путь к файлу в переменной url, и что запрос асинхронный,
-        по умолчанию так и есть не стоит его указывать, еще есть 4-й параметр - пароль авторизации, необязат.*/
-        request.open("POST", url, true);
+        /* указываем что соединение будет POST, путь к файлу в переменной url, что запрос синхронный (!),
+        по умолчанию так и есть не стоит его указывать, необязат. 4-й параметр - пароль авторизации */
+        request.open("POST", url, false);
         request.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); // в заголовке -
         request.addEventListener("readystatechange", () => { // что тип передаваемых данных закодирован
             if(request.readyState === 4 && request.status === 200) {
-                console.log(request.responseText);
+                //console.log(request.responseText);
+                board.checkersString = request.responseText;
             }
         });
         request.send(); // здесь и передаем строку с данными, которую формировали выше, и собственно выполняем запрос
     }
-
 }
 
 function checkerClick(event) { // обработчик события клика
@@ -521,9 +523,9 @@ boardSize = 8;
 board = new Board(boardSize);
 //board.placeCheckers(boardSize);
 
-callAjax = new PHPLinks();
-callAjax.getCheckersString(); // вызываем метод с AJAX-запросом
-
+callAjax = new PHPLinks(); // новый объект для связи с PHP-скриптом на сервере
+callAjax.getCheckersString(); // вызываем метод с AJAX-запросом для получения с сервера строки с располож. шашек
+// размещаем шашки начально в соотв. с полученной от сервера строкой
 board.placeCheckersPHP(boardSize); // вместо board.placeCheckers(), кот. выше закомментирован
 
 newGame = new DrawGame();
