@@ -486,21 +486,9 @@ class DrawGame {
 
 }
 
-function checkerClick(event) { // обработчик события клика
-    let clickedElement = event.target; // из события клика получаем эл-т по которому кликнули
-    if (clickedElement.tagName === 'IMG') { // если кликнуто по шашке (рисунку)
-        posX = clickedElement.parentNode.cellIndex; // позиция X - индекс ячейки в строке таблицы
-        posY = clickedElement.parentNode.parentElement.rowIndex; // позиция Y - номер строки в таблице
-    } else { // если кликнуто просто по клетке
-        posX = clickedElement.cellIndex;
-        posY = clickedElement.parentElement.rowIndex;
-    }
-    board.clickProcessing(posX, posY); // вызываем метод обработки и передаем в него полученные координаты
-}
-
 class PHPLinks {
 
-    getCheckers() { // получить строку с шашками из ... (пока строка в PHP файле, потом из базы)
+    getCheckersString() { // получить строку с шашками из ... (пока строка в PHP файле, потом из базы)
         const request = new XMLHttpRequest(); // создаем экземпляр класса (объект) XMLHttpRequest
         const url = "checkers.php"; // Указываем путь к файлу на сервере, кот. будет обрабатывать запрос
         /* указываем что соединение будет POST, путь к файлу в переменной url, и что запрос асинхронный,
@@ -517,12 +505,24 @@ class PHPLinks {
 
 }
 
+function checkerClick(event) { // обработчик события клика
+    let clickedElement = event.target; // из события клика получаем эл-т по которому кликнули
+    if (clickedElement.tagName === 'IMG') { // если кликнуто по шашке (рисунку)
+        posX = clickedElement.parentNode.cellIndex; // позиция X - индекс ячейки в строке таблицы
+        posY = clickedElement.parentNode.parentElement.rowIndex; // позиция Y - номер строки в таблице
+    } else { // если кликнуто просто по клетке
+        posX = clickedElement.cellIndex;
+        posY = clickedElement.parentElement.rowIndex;
+    }
+    board.clickProcessing(posX, posY); // вызываем метод обработки и передаем в него полученные координаты
+}
+
 boardSize = 8;
 board = new Board(boardSize);
 //board.placeCheckers(boardSize);
 
 callAjax = new PHPLinks();
-callAjax.getCheckers(); // вызываем метод с AJAX-запросом
+callAjax.getCheckersString(); // вызываем метод с AJAX-запросом
 
 board.placeCheckersPHP(boardSize); // вместо board.placeCheckers(), кот. выше закомментирован
 
