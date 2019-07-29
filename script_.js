@@ -83,7 +83,7 @@ class Board { // доска
         }
     }
 
-    placeCheckersPHP(boardSize, checkersString) { // расставляем шашки в соотв. со считанной из checkers.php строкой
+    placeCheckersPHP(boardSize) { // расставляем шашки в соотв. со считанной из checkers.php строкой
         let k = 1;
         for (let j = 0; j < boardSize; j++) { // считать строку посимвольно и разместить шашки
             for (let i = 0; i < boardSize; i++) {
@@ -515,9 +515,6 @@ class PHPLinks {
         request.send(); // здесь и передаем строку с данными, которую формировали выше, и собственно выполняем запрос
     }
 
-    putCheckers()  {
-        // отправляет строку
-    }
 }
 
 boardSize = 8;
@@ -525,9 +522,9 @@ board = new Board(boardSize);
 //board.placeCheckers(boardSize);
 
 callAjax = new PHPLinks();
-checkersString = callAjax.getCheckers(); // вызываем метод с AJAX-запросом
+callAjax.getCheckers(); // вызываем метод с AJAX-запросом
 
-board.placeCheckersPHP(boardSize, checkersString); // вместо board.placeCheckers(), кот. выше закомментирован
+board.placeCheckersPHP(boardSize); // вместо board.placeCheckers(), кот. выше закомментирован
 
 newGame = new DrawGame();
 newGame.drawBoard(board);
