@@ -83,9 +83,20 @@ class Board { // доска
         }
     }
 
-    placeCheckersPHP(stringBoard) {
-        // считать строку из checkers.php и в соответствии с ней построить объект "доска"
-
+    placeCheckersPHP(boardSize, checkersString) { // расставляем шашки в соотв. со считанной из checkers.php строкой
+        let k = 1;
+        for (let j = 0; j < boardSize; j++) { // считать строку посимвольно и разместить шашки
+            for (let i = 0; i < boardSize; i++) {
+                console.log(k);
+                k++;
+                /*if (checkersString)
+                {
+                    let currentChecker = new Checker('black', false, i, j);
+                    this.boardCells[i][j].appendChecker(currentChecker);
+                    this.countBlack++;
+                }*/
+            }
+        }
     }
 
 
@@ -488,15 +499,12 @@ function checkerClick(event) { // обработчик события клика
 }
 
 class PHPLinks {
-    // вызвать загрузку строки
-    // считать строку посимвольно и разместить шашки
-    getCheckers() { // получить строку с шашками из ...
 
-        const request = new XMLHttpRequest(); // Создаем экземпляр класса XMLHttpRequest
+    getCheckers() { // получить строку с шашками из ... (пока строка в PHP файле, потом из базы)
+        const request = new XMLHttpRequest(); // создаем экземпляр класса (объект) XMLHttpRequest
         const url = "checkers.php"; // Указываем путь к файлу на сервере, кот. будет обрабатывать запрос
-
-        /* Указываем что соединение будет POST и что путь к файлу в переменной url, и что запрос асинхронный,
-        по умолчанию так и есть не стоит его указывать, еще есть 4-й параметр пароль авторизации, необязателен.*/
+        /* указываем что соединение будет POST, путь к файлу в переменной url, и что запрос асинхронный,
+        по умолчанию так и есть не стоит его указывать, еще есть 4-й параметр - пароль авторизации, необязат.*/
         request.open("POST", url, true);
         request.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); // в заголовке -
         request.addEventListener("readystatechange", () => { // что тип передаваемых данных закодирован
@@ -514,13 +522,12 @@ class PHPLinks {
 
 boardSize = 8;
 board = new Board(boardSize);
-board.placeCheckers(boardSize);
+//board.placeCheckers(boardSize);
 
-// вызываем аякс-запрос
 callAjax = new PHPLinks();
-callAjax.getCheckers();
+checkersString = callAjax.getCheckers(); // вызываем метод с AJAX-запросом
 
-// вызываем board.placeCheckersPHP(boardSize);
+board.placeCheckersPHP(boardSize, checkersString); // вместо board.placeCheckers(), кот. выше закомментирован
 
 newGame = new DrawGame();
 newGame.drawBoard(board);
