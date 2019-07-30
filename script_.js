@@ -503,6 +503,18 @@ class PHPLinks { // класс для связи с PHP-скриптами дл�
         });
         request.send(); // здесь и передаем строку с данными, которую формировали выше, и собственно выполняем запрос
     }
+    putCheckersString(checkersString) {
+        const request = new XMLHttpRequest();
+        const url = "putCheckersString.php";
+        request.open("POST", url, false);
+        request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        request.addEventListener("readystatechange", () => {
+            if(request.readyState === 4 && request.status === 200) {
+                board.checkersString = request.responseText;
+            }
+        });
+        request.send(checkersString); // здесь и передаем строку с данными, которую формировали выше, и собственно выполняем запрос
+    }
 }
 
 function checkerClick(event) { // обработчик события клика
