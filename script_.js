@@ -50,7 +50,7 @@ class Board { // доска
         this.captureCheckers = []; // "одновременно" бьющие шашки (макимум 2?)
         this.posX2 = null; // позиция шашки которая била последней (для случай мультибоя)
         this.posY2 = null;
-        this.checkersString = null; // для строки из PHP для хранения начального расположения шашек
+        this.checkersString = null; // для хранения строки расположения шашек получ. из БД MySQL
 
         for (let j = 0; j < boardSize; j++) { // формируем доску
             this.boardCells[j] = [];
@@ -84,8 +84,8 @@ class Board { // доска
         }
     }*/
 
-    placeCheckersPHP(boardSize) { // расставляем шашки в соотв. со считанной из checkers.php строкой
-        let k = 0; // (считать строку посимвольно и разместить шашки в соответствии)
+    placeCheckersPHP(boardSize) { // расставляем шашки в соотв. со считанной из БД MySQL строкой
+        let k = 0; // (распарсить строку посимвольно и разместить шашки в соответствии)
         for (let j = 0; j < boardSize; j++) {
             for (let i = 0; i < boardSize; i++) {
                 if (this.checkersString[k] === '1') { // каждый символ строки как элемент массива
@@ -98,12 +98,10 @@ class Board { // доска
                     this.boardCells[i][j].appendChecker(currentChecker);
                     this.countWhite++;
                 }
-                k++;
+                k++; // k - от 0 до 63 для доски 8х8
             }
         }
     }
-
-
 
     clickProcessing(posX, posY) { // получаем координаты из обработчика события клика
 
@@ -490,11 +488,11 @@ class DrawGame {
 }
 
 class PHPLinks { // класс для связи с PHP-скриптами для сохранеия/обновления состояния доски на/с сервер(а)
-    getCheckersString() { // получить строку с шашками из ... (пока строка в PHP файле, потом из базы)
+    getCheckersString() { // получить строку с шашками из базы данных MySQL
         const request = new XMLHttpRequest(); // создаем экземпляр класса (объект) XMLHttpRequest
-        const url = "checkers.php"; // Указываем путь к файлу на сервере, кот. будет обрабатывать запрос
-        /* указываем что соединение будет POST, путь к файлу в переменной url, что запрос синхронный (!),
-        по умолчанию так и есть не стоит его указывать, необязат. 4-й параметр - пароль авторизации */
+        const url = "getCheckersString.php"; // путь к скрипту на сервере, кот. будет обрабатывать запрос
+        /* указываем что соединение будет POST, путь к скрипту в переменной url, что запрос
+        синхронный (!), по умолчанию - ассинхр., необязат. 4-й параметр - пароль авторизации */
         request.open("POST", url, false);
         request.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); // в заголовке -
         request.addEventListener("readystatechange", () => { // что тип передаваемых данных закодирован
