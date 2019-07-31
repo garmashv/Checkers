@@ -98,7 +98,25 @@ class Board { // доска
                     this.boardCells[i][j].appendChecker(currentChecker);
                     this.countWhite++;
                 }
-                k++; // k - от 0 до 63 для доски 8х8
+                k++; // k меняется от 0 до 63 для доски 8х8
+            }
+        }
+    }
+
+    formCheckersString() { // формирование строки располож. шашек для записи в БД по текущему состоянию доски
+        this.checkersString = '';
+        for (let j = 0; j < boardSize; j++) {
+            for (let i = 0; i < boardSize; i++) {
+                if (this.boardCells[i][j].currentChecker) {
+                    if (this.boardCells[i][j].currentChecker.color === 'black') {
+                        this.checkersString += '1';
+                    }
+                    if (this.boardCells[i][j].currentChecker.color === 'white') {
+                        this.checkersString += '2';
+                    }
+                } else {
+                    this.checkersString += '0';
+                }
             }
         }
     }
@@ -497,23 +515,24 @@ class PHPLinks { // класс для связи с PHP-скриптами дл�
         request.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); // в заголовке -
         request.addEventListener("readystatechange", () => { // что тип передаваемых данных закодирован
             if(request.readyState === 4 && request.status === 200) {
-                //console.log(request.responseText);
                 board.checkersString = request.responseText;
             }
         });
         request.send(); // здесь и передаем строку с данными, которую формировали выше, и собственно выполняем запрос
     }
-    putCheckersString(checkersString) {
+    putCheckersString(checkersString) { // записать строку с шашками в базу данных MySQL
+        //checkersString = board.checkersString;
+        var body = 'checkersString=' + board.checkersString;
         const request = new XMLHttpRequest();
         const url = "putCheckersString.php";
         request.open("POST", url, false);
         request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         request.addEventListener("readystatechange", () => {
             if(request.readyState === 4 && request.status === 200) {
-                board.checkersString = request.responseText;
+                console.log('OK');
             }
         });
-        request.send(checkersString); // здесь и передаем строку с данными, которую формировали выше, и собственно выполняем запрос
+        request.send(body);
     }
 }
 
