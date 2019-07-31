@@ -50,7 +50,8 @@ class Board { // доска
         this.captureCheckers = []; // "одновременно" бьющие шашки (макимум 2?)
         this.posX2 = null; // позиция шашки которая била последней (для случай мультибоя)
         this.posY2 = null;
-        this.checkersString = null; // для хранения строки расположения шашек получ. из БД MySQL
+        // для хранения строки расположения шашек получ. из БД MySQL
+        this.checkersString = '1010101001010101101010100000000000000000020202022020202002020202';
 
         for (let j = 0; j < boardSize; j++) { // формируем доску
             this.boardCells[j] = [];
@@ -521,8 +522,7 @@ class PHPLinks { // класс для связи с PHP-скриптами дл�
         request.send(); // здесь и передаем строку с данными, которую формировали выше, и собственно выполняем запрос
     }
     putCheckersString(checkersString) { // записать строку с шашками в базу данных MySQL
-        //checkersString = board.checkersString;
-        var body = 'checkersString=' + board.checkersString;
+        checkersString = 'checkersString=' + board.checkersString;
         const request = new XMLHttpRequest();
         const url = "putCheckersString.php";
         request.open("POST", url, false);
@@ -532,7 +532,7 @@ class PHPLinks { // класс для связи с PHP-скриптами дл�
                 console.log('OK');
             }
         });
-        request.send(body);
+        request.send(checkersString);
     }
 }
 
