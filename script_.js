@@ -87,16 +87,19 @@ class Board { // доска
 
     placeCheckersPHP(boardSize) { // расставляем шашки в соотв. со считанной из БД MySQL строкой
         let k = 0; // (распарсить строку посимвольно и разместить шашки в соответствии)
-        for (let j = 0; j < boardSize; j++) {
+        for (let j = 0; j < boardSize; j++) { // каждый символ строки как элемент массива
             for (let i = 0; i < boardSize; i++) {
-                if (this.checkersString[k] === '1') { // каждый символ строки как элемент массива
+                if (this.checkersString[k] === '0') { // если в клетке нет шашки
+                    this.boardCells[i][j].currentChecker = null; // "... то так и запишем"
+                }
+                if (this.checkersString[k] === '1') { // если черная,
                     let currentChecker = new Checker('black', false, i, j);
-                    this.boardCells[i][j].appendChecker(currentChecker);
+                    this.boardCells[i][j].appendChecker(currentChecker); // то добавляем черную
                     this.countBlack++;
                 }
-                if (this.checkersString[k] === '2') {
+                if (this.checkersString[k] === '2') { // если белая,
                     let currentChecker = new Checker('white', false, i, j);
-                    this.boardCells[i][j].appendChecker(currentChecker);
+                    this.boardCells[i][j].appendChecker(currentChecker); // то белую соотвеств.
                     this.countWhite++;
                 }
                 k++; // k меняется от 0 до 63 для доски 8х8
@@ -546,6 +549,7 @@ function checkerClick(event) { // обработчик события клика
         posY = clickedElement.parentElement.rowIndex;
     }
     board.clickProcessing(posX, posY); // вызываем метод обработки и передаем в него полученные координаты
+
     board.formCheckersString();
     callAjax.putCheckersString(board.checkersString);
 }
@@ -554,13 +558,14 @@ boardSize = 8;
 board = new Board(boardSize);
 
 callAjax = new PHPLinks(); // новый объект для связи с PHP-скриптом на сервере
-//callAjax.getCheckersString(); // вызываем метод с AJAX-запросом для получения с сервера строки с располож. шашек
+
 board.placeCheckersPHP(boardSize); // размещаем шашки начально в соотв. с полученной от сервера строкой
 
 newGame = new DrawGame();
 newGame.drawBoard(board);
 newGame.drawCountBlack(board.countBlack);
 newGame.drawCountWhite(board.countWhite);
+//setInterval(callAjax.getCheckersString, 2000);
 
 document.querySelector('#currentMove').innerHTML = 'Current move: WHITE';
 document.addEventListener("click", event=>checkerClick(event));
