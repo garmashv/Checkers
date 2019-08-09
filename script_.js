@@ -530,11 +530,11 @@ class PHPLinks { // класс для связи с PHP-скриптами дл�
         const url = "putCheckersString.php";
         request.open("POST", url, false);
         request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        request.addEventListener("readystatechange", () => {
-            /*if(request.readyState === 4 && request.status === 200) {
+        /*request.addEventListener("readystatechange", () => {
+            if(request.readyState === 4 && request.status === 200) {
                 console.log('OK');
-            }*/
-        });
+            }
+        });*/
         request.send(checkersString);
     }
 }
@@ -550,8 +550,14 @@ function checkerClick(event) { // обработчик события клика
     }
     board.clickProcessing(posX, posY); // вызываем метод обработки и передаем в него полученные координаты
 
-    board.formCheckersString();
-    callAjax.putCheckersString(board.checkersString);
+    board.formCheckersString(); //////////////////////////////////////////////////////// -----> ??
+    callAjax.putCheckersString(board.checkersString); ////////////////////////////////// -----> ??
+}
+
+function redrawCheckersPHP() {
+    callAjax.getCheckersString();
+    board.placeCheckersPHP(boardSize);
+    newGame.drawBoard(board);
 }
 
 boardSize = 8;
@@ -565,7 +571,8 @@ newGame = new DrawGame();
 newGame.drawBoard(board);
 newGame.drawCountBlack(board.countBlack);
 newGame.drawCountWhite(board.countWhite);
-//setInterval(callAjax.getCheckersString, 2000);
+
+//setInterval(redrawCheckersPHP, 2000);
 
 document.querySelector('#currentMove').innerHTML = 'Current move: WHITE';
 document.addEventListener("click", event=>checkerClick(event));
