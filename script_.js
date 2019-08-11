@@ -519,13 +519,15 @@ class PHPLinks { // класс для связи с PHP-скриптами дл�
         request.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); // в заголовке -
         request.addEventListener("readystatechange", () => { // что тип передаваемых данных закодирован
             if(request.readyState === 4 && request.status === 200) {
-                board.checkersString = request.responseText;
+                board.checkersString = request.responseText.substring(0, 63);
+                board.currentMove = request.responseText.substring(64);
             }
         });
         request.send(); // здесь и передаем строку с данными, которую формировали выше, и собственно выполняем запрос
     }
-    putCheckersString(checkersString) { // записать строку с шашками в базу данных MySQL
-        checkersString = 'checkersString=' + board.checkersString; // параметр в POST для скрипта putCheckersString.php
+    putCheckersString(parameters) { // записать строку с шашками в базу данных MySQL
+        // параметры в POST для скрипта putCheckersString.php
+        parameters = 'checkersString=' + board.checkersString + '&currentMove=' + board.currentMove ;
         const request = new XMLHttpRequest();
         const url = "putCheckersString.php";
         request.open("POST", url, false);
@@ -535,7 +537,7 @@ class PHPLinks { // класс для связи с PHP-скриптами дл�
                 console.log('OK');
             }
         });*/
-        request.send(checkersString);
+        request.send(parameters);
     }
 }
 
@@ -550,8 +552,8 @@ function checkerClick(event) { // обработчик события клика
     }
     board.clickProcessing(posX, posY); // вызываем метод обработки и передаем в него полученные координаты
 
-    board.formCheckersString(); //////////////////////////////////////////////////////// -----> ??
-    callAjax.putCheckersString(board.checkersString); ////////////////////////////////// -----> ??
+    board.formCheckersString();
+    callAjax.putCheckersString(board.checkersString);
 }
 
 function redrawCheckersPHP() {
@@ -566,13 +568,14 @@ board = new Board(boardSize);
 callAjax = new PHPLinks(); // новый объект для связи с PHP-скриптом на сервере
 
 board.placeCheckersPHP(boardSize); // размещаем шашки начально в соотв. с полученной от сервера строкой
+callAjax.putCheckersString(board.checkersString);
 
 newGame = new DrawGame();
 newGame.drawBoard(board);
 newGame.drawCountBlack(board.countBlack);
 newGame.drawCountWhite(board.countWhite);
 
-//setInterval(redrawCheckersPHP, 2000);
+//setInterval(redrawCheckersPHP, 3000);
 
 document.querySelector('#currentMove').innerHTML = 'Current move: WHITE';
 document.addEventListener("click", event=>checkerClick(event));

@@ -18,4 +18,15 @@ if (isset($_COOKIE['id']) and isset($_COOKIE['hash'])) {
 } else {
     print "Включите куки";
 }
+?>
 
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Checkers</title>
+</head>
+<body>
+    <button onclick="location.href = 'http://project.local/checkers/checkers.html'">New game</button>
+</body>
+</html>
