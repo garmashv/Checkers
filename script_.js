@@ -486,7 +486,9 @@ class DrawGame {
         }
         tbl.appendChild(tblBody);
         body.appendChild(tbl);
-        tbl.setAttribute("border", "2");
+        tbl.setAttribute("border", "5");
+        tbl.setAttribute("cellpadding", "0");
+        tbl.setAttribute("cellspacing", "0");
     }
 
     drawCurrentMove(currentMove) { // для индикации цвета текущего хода
