@@ -22,7 +22,7 @@ if (isset($_POST['submit'])) { // Вытаскиваем из БД запись,
     if ($data['user_password'] === md5(md5($_POST['password']))) { // Сравниваем пароли
         $hash = md5(generateCode(10)); // Генерируем случайное число и шифруем его
 
-        // Записываем в БД новый хеш авторизации и IP
+        // Записываем в БД новый хеш авторизации
         mysqli_query($link, "UPDATE users SET user_hash ='" . $hash . "' " . " WHERE user_id ='" .
             $data['user_id'] . "'");
 

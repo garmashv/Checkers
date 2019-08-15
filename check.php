@@ -1,11 +1,10 @@
 <?php // Скрипт проверки
 
-// Соединямся с БД
+// Соединяемся с БД
 $link = mysqli_connect("localhost", "checkers", "Checkers-123456", "checkers");
 
 if (isset($_COOKIE['id']) and isset($_COOKIE['hash'])) {
-    $query = mysqli_query($link, "SELECT *,INET_NTOA(user_ip) AS user_ip FROM users WHERE user_id = '" .
-        intval($_COOKIE['id']) . "' LIMIT 1");
+    $query = mysqli_query($link, "SELECT * FROM users WHERE user_id = '" . intval($_COOKIE['id']) . "' LIMIT 1");
     $userdata = mysqli_fetch_assoc($query);
 
     if (($userdata['user_hash'] !== $_COOKIE['hash']) or ($userdata['user_id'] !== $_COOKIE['id'])) {
@@ -13,20 +12,22 @@ if (isset($_COOKIE['id']) and isset($_COOKIE['hash'])) {
         setcookie("hash", "", time() - 3600 * 24 * 30 * 12, "/");
         print "Хм, что-то не получилось";
     } else {
-        print "Привет, " . $userdata['user_login'] . ". Всё работает!";
+        print "Привет, " . $userdata['user_login'] . ". Всё работает!"; ?>
+
+        <!DOCTYPE HTML>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Checkers</title>
+        </head>
+        <body>
+        <button onclick="location.href = 'http://project.local/checkers/checkers.html'">New game</button>
+        </body>
+        </html>
+
+        <?php
     }
 } else {
     print "Включите куки";
 }
 ?>
-
-<!DOCTYPE HTML>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Checkers</title>
-</head>
-<body>
-    <button onclick="location.href = 'http://project.local/checkers/checkers.html'">New game</button>
-</body>
-</html>
